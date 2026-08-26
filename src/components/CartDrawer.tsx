@@ -1,0 +1,233 @@
+'use client';
+
+import { useState } from 'react';
+import Image from 'next/image';
+import { useStore } from '@/store/useStore';
+import { X, Trash2, Plus, Minus, ShoppingBag, MessageSquare, Tag } from 'lucide-react';
+
+export function CartDrawer() {
+  const {
+    cart,
+    isCartOpen,
+    closeCart,
+    removeFromCart,
+    updateQuantity,
+    formatPrice,
+    clearCart,
+    addToast,
+    currency,
+  } = useStore();
+
+  const [promoCode, setPromoCode] = useState('');
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [promoApplied, setPromoApplied] = useState(false);
+
+  if (!isCartOpen) return null;
+
+  const rawSubtotalUSD = cart.reduce((acc, item) => acc + item.priceUSD * item.quantity, 0);
+  const discountUSD = rawSubtotalUSD * (discountPercent / 100);
+  const subtotalUSD = rawSubtotalUSD - discountUSD;
+
+  const handleApplyPromo = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (promoCode.trim().toUpperCase() === 'RAYNVIP' || promoCode.trim().toUpperCase() === 'DROP01') {
+      setDiscountPercent(15);
+      setPromoApplied(true);
+      addToast('Cupón Exclusivo Aplicado', '15% de descuento especial activado', 'success');
+    } else {
+      addToast('Código no válido', 'Prueba con RAYNVIP para 15% off', 'info');
+    }
+  };
+
+  const handleWhatsAppCheckout = () => {
+    if (cart.length === 0) return;
+
+    let message = `*SOLICITUD DE PEDIDO // RAYN MAISON*\n`;
+    message += `──────────────────────\n`;
+    cart.forEach((item, idx) => {
+      message += `${idx + 1}. *${item.name}*\n   - Opción/Talla: ${item.selectedOption}\n   - Cantidad: ${item.quantity}\n   - Subtotal: ${formatPrice(item.priceUSD * item.quantity)}\n\n`;
+    });
+    if (promoApplied) {
+      message += `🎟️ Descuento aplicado: 15% (Cupón ${promoCode.toUpperCase()})\n`;
+    }
+    message += `──────────────────────\n`;
+    message += `*TOTAL ESTIMADO:* ${formatPrice(subtotalUSD)}\n`;
+    message += `*MONEDA:* ${currency}\n`;
+    message += `\n_Deseo confirmar la orden y coordinar el envío de mi selección RAYN._`;
+
+    const encoded = encodeURIComponent(message);
+    window.open(`https://wa.me/?text=${encoded}`, '_blank');
+    addToast('Redirigiendo a Concierge WhatsApp', 'Tu orden ha sido estructurada con éxito', 'success');
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-hidden bg-black/80 backdrop-blur-sm animate-fadeIn">
+      <div className="absolute inset-0" onClick={closeCart} aria-hidden="true" />
+
+      <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
+        <div className="w-screen max-w-md bg-[#0D0D10] border-l border-white/15 text-white flex flex-col shadow-2xl">
+          {/* Header */}
+          <div className="p-6 border-b border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <ShoppingBag className="w-5 h-5 text-white" />
+              <div>
+                <h3 className="text-base font-bold uppercase tracking-wider">Tu Bolsa RAYN</h3>
+                <span className="text-[10px] font-mono text-[#71717A]">
+                  {cart.length} {cart.length === 1 ? 'artículo seleccionado' : 'artículos seleccionados'}
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={closeCart}
+              className="p-2 text-[#A1A1AA] hover:text-white rounded-full hover:bg-white/5 transition-colors"
+              aria-label="Cerrar bolsa"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Cart Items List */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            {cart.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center space-y-4 py-12">
+                <div className="w-16 h-16 rounded-full border border-white/15 bg-white/5 flex items-center justify-center">
+                  <ShoppingBag className="w-7 h-7 text-[#71717A]" />
+                </div>
+                <div>
+                  <p className="text-base font-bold text-white">Tu bolsa está vacía</p>
+                  <p className="text-xs text-[#71717A] max-w-xs mt-1 font-light">
+                    Explora nuestra selección de moda urbana, sneakers y fragancias de autor.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={closeCart}
+                  className="btn-rayn-primary px-6 py-2.5 text-xs font-mono"
+                >
+                  Explorar Universo
+                </button>
+              </div>
+            ) : (
+              cart.map((item) => (
+                <div
+                  key={item.id}
+                  className="p-4 bg-[#141418] border border-white/10 rounded-sm flex gap-4 items-center group"
+                >
+                  {/* Thumbnail */}
+                  <div className="relative w-18 h-18 rounded-sm overflow-hidden bg-black flex-shrink-0 border border-white/10">
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-1">
+                      <h4 className="text-xs font-bold text-white truncate">{item.name}</h4>
+                      <button
+                        type="button"
+                        onClick={() => removeFromCart(item.id)}
+                        className="text-[#71717A] hover:text-red-400 p-1 transition-colors"
+                        aria-label="Eliminar artículo"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="text-[10px] font-mono text-[#A1A1AA] mt-0.5">
+                      {item.selectedOption}
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between">
+                      {/* Quantity Stepper */}
+                      <div className="flex items-center border border-white/15 rounded-sm bg-white/5">
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="px-2 py-0.5 text-white hover:bg-white/10 text-xs font-mono"
+                        >
+                          <Minus className="w-2.5 h-2.5" />
+                        </button>
+                        <span className="px-2 py-0.5 text-[11px] font-mono font-bold text-white">
+                          {item.quantity}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="px-2 py-0.5 text-white hover:bg-white/10 text-xs font-mono"
+                        >
+                          <Plus className="w-2.5 h-2.5" />
+                        </button>
+                      </div>
+
+                      {/* Price */}
+                      <span className="text-xs font-bold font-mono text-white">
+                        {formatPrice(item.priceUSD * item.quantity)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* Cart Footer */}
+          {cart.length > 0 && (
+            <div className="p-6 border-t border-white/10 bg-[#0A0A0D] space-y-4">
+              {/* Promo Code Input */}
+              <form onSubmit={handleApplyPromo} className="flex gap-2">
+                <div className="relative flex-1">
+                  <Tag className="w-3.5 h-3.5 text-[#71717A] absolute left-3 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    placeholder="Código de cortesía (ej. RAYNVIP)"
+                    className="w-full bg-[#141418] border border-white/10 text-white pl-8 pr-3 py-2 text-[11px] font-mono placeholder-[#71717A] rounded-sm focus:outline-none focus:border-white"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="px-3 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/15 text-[10px] font-mono uppercase font-bold rounded-sm"
+                >
+                  Aplicar
+                </button>
+              </form>
+
+              {/* Subtotal Calculations */}
+              <div className="space-y-1.5 text-xs font-mono">
+                {promoApplied && (
+                  <div className="flex justify-between text-emerald-400">
+                    <span>Descuento VIP (15%):</span>
+                    <span>-{formatPrice(discountUSD)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-white/10">
+                  <span>TOTAL:</span>
+                  <span className="text-base font-mono">{formatPrice(subtotalUSD)}</span>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={handleWhatsAppCheckout}
+                  className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-mono text-xs tracking-wider uppercase rounded-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50 transition-colors"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  <span>Comprar vía WhatsApp Concierge</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
