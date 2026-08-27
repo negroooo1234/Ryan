@@ -79,8 +79,8 @@ export function EditorialLookbook() {
                     type="button"
                     onClick={() => setActiveHotspot(isActive ? null : hs.id)}
                     className={`relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isActive
-                        ? 'bg-white text-black scale-125 shadow-[0_0_20px_#ffffff]'
-                        : 'bg-black/70 text-white border border-white/50 hover:scale-110 hover:border-white'
+                      ? 'bg-white text-black scale-125 shadow-[0_0_20px_#ffffff]'
+                      : 'bg-black/70 text-white border border-white/50 hover:scale-110 hover:border-white'
                       }`}
                     aria-label={`Ver pieza ${hs.label}`}
                   >
@@ -157,8 +157,8 @@ export function EditorialLookbook() {
                     key={hs.id}
                     onClick={() => setActiveHotspot(hs.id)}
                     className={`p-3 rounded-sm border transition-all cursor-pointer flex items-center justify-between ${activeHotspot === hs.id
-                        ? 'bg-white/10 border-white/40'
-                        : 'bg-white/2 border-white/5 hover:border-white/20'
+                      ? 'bg-white/10 border-white/40'
+                      : 'bg-white/2 border-white/5 hover:border-white/20'
                       }`}
                   >
                     <div className="flex items-center gap-3">

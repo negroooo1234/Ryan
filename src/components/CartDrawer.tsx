@@ -1,9 +1,8 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
 import { useStore } from '@/store/useStore';
-import { X, Trash2, Plus, Minus, ShoppingBag, MessageSquare, Tag } from 'lucide-react';
+import { X, Trash2, Plus, Minus, ShoppingBag, MessageSquare } from 'lucide-react';
 
 export function CartDrawer() {
   const {
@@ -18,26 +17,9 @@ export function CartDrawer() {
     currency,
   } = useStore();
 
-  const [promoCode, setPromoCode] = useState('');
-  const [discountPercent, setDiscountPercent] = useState(0);
-  const [promoApplied, setPromoApplied] = useState(false);
-
   if (!isCartOpen) return null;
 
-  const rawSubtotalUSD = cart.reduce((acc, item) => acc + item.priceUSD * item.quantity, 0);
-  const discountUSD = rawSubtotalUSD * (discountPercent / 100);
-  const subtotalUSD = rawSubtotalUSD - discountUSD;
-
-  const handleApplyPromo = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (promoCode.trim().toUpperCase() === 'RAYNVIP' || promoCode.trim().toUpperCase() === 'DROP01') {
-      setDiscountPercent(15);
-      setPromoApplied(true);
-      addToast('Cupón Exclusivo Aplicado', '15% de descuento especial activado', 'success');
-    } else {
-      addToast('Código no válido', 'Prueba con RAYNVIP para 15% off', 'info');
-    }
-  };
+  const subtotalUSD = cart.reduce((acc, item) => acc + item.priceUSD * item.quantity, 0);
 
   const handleWhatsAppCheckout = () => {
     if (cart.length === 0) return;
@@ -47,9 +29,6 @@ export function CartDrawer() {
     cart.forEach((item, idx) => {
       message += `${idx + 1}. *${item.name}*\n   - Opción/Talla: ${item.selectedOption}\n   - Cantidad: ${item.quantity}\n   - Subtotal: ${formatPrice(item.priceUSD * item.quantity)}\n\n`;
     });
-    if (promoApplied) {
-      message += `🎟️ Descuento aplicado: 15% (Cupón ${promoCode.toUpperCase()})\n`;
-    }
     message += `──────────────────────\n`;
     message += `*TOTAL ESTIMADO:* ${formatPrice(subtotalUSD)}\n`;
     message += `*MONEDA:* ${currency}\n`;
@@ -179,34 +158,8 @@ export function CartDrawer() {
           {/* Cart Footer */}
           {cart.length > 0 && (
             <div className="p-6 border-t border-white/10 bg-[#0A0A0D] space-y-4">
-              {/* Promo Code Input */}
-              <form onSubmit={handleApplyPromo} className="flex gap-2">
-                <div className="relative flex-1">
-                  <Tag className="w-3.5 h-3.5 text-[#71717A] absolute left-3 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    placeholder="Código de cortesía (ej. RAYNVIP)"
-                    className="w-full bg-[#141418] border border-white/10 text-white pl-8 pr-3 py-2 text-[11px] font-mono placeholder-[#71717A] rounded-sm focus:outline-none focus:border-white"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="px-3 py-2 bg-white/10 hover:bg-white/20 text-white border border-white/15 text-[10px] font-mono uppercase font-bold rounded-sm"
-                >
-                  Aplicar
-                </button>
-              </form>
-
               {/* Subtotal Calculations */}
               <div className="space-y-1.5 text-xs font-mono">
-                {promoApplied && (
-                  <div className="flex justify-between text-emerald-400">
-                    <span>Descuento VIP (15%):</span>
-                    <span>-{formatPrice(discountUSD)}</span>
-                  </div>
-                )}
                 <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-white/10">
                   <span>TOTAL:</span>
                   <span className="text-base font-mono">{formatPrice(subtotalUSD)}</span>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useStore } from '@/store/useStore';
-import { X, Heart, ShoppingBag, Check, Shield, Truck, MessageCircle, Sparkles } from 'lucide-react';
+import { X, ShoppingBag, Check, Shield, Truck, MessageCircle, Sparkles } from 'lucide-react';
 
 export function ProductQuickViewModal() {
   const {
@@ -11,8 +11,6 @@ export function ProductQuickViewModal() {
     closeQuickView,
     addToCart,
     formatPrice,
-    toggleWishlist,
-    isInWishlist,
   } = useStore();
 
   const [selectedOption, setSelectedOption] = useState<string>('');
@@ -35,8 +33,6 @@ export function ProductQuickViewModal() {
   }, [quickViewProduct]);
 
   if (!quickViewProduct) return null;
-
-  const isFav = isInWishlist(quickViewProduct.id);
 
   const handleAddToCart = () => {
     addToCart(quickViewProduct, selectedOption, quantity);
@@ -157,8 +153,8 @@ export function ProductQuickViewModal() {
                     type="button"
                     onClick={() => setSelectedOption(opt)}
                     className={`px-3 py-2 text-xs font-mono rounded-sm transition-all ${selectedOption === opt
-                        ? 'bg-white text-black font-bold shadow-md'
-                        : 'bg-white/5 text-[#CBD5E1] hover:bg-white/10 border border-white/15'
+                      ? 'bg-white text-black font-bold shadow-md'
+                      : 'bg-white/5 text-[#CBD5E1] hover:bg-white/10 border border-white/15'
                       }`}
                   >
                     {opt}
@@ -199,8 +195,8 @@ export function ProductQuickViewModal() {
                 type="button"
                 onClick={handleAddToCart}
                 className={`flex-1 py-3.5 px-4 rounded-sm flex items-center justify-center gap-2 text-xs font-mono font-bold tracking-wider uppercase transition-all ${isAdded
-                    ? 'bg-emerald-500 text-black'
-                    : 'bg-white text-black hover:bg-[#E2E8F0]'
+                  ? 'bg-emerald-500 text-black'
+                  : 'bg-white text-black hover:bg-[#E2E8F0]'
                   }`}
               >
                 {isAdded ? (
@@ -214,18 +210,6 @@ export function ProductQuickViewModal() {
                     <span>AÑADIR A LA BOLSA • {formatPrice(quickViewProduct.priceUSD * quantity)}</span>
                   </>
                 )}
-              </button>
-
-              <button
-                type="button"
-                onClick={() => toggleWishlist(quickViewProduct.id)}
-                className={`p-3.5 rounded-sm border transition-colors ${isFav
-                    ? 'bg-white text-black border-white'
-                    : 'bg-white/5 text-white border-white/15 hover:bg-white/10'
-                  }`}
-                aria-label="Favoritos"
-              >
-                <Heart className={`w-4 h-4 ${isFav ? 'fill-black' : ''}`} />
               </button>
             </div>
 

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Product } from '@/types';
 import { useStore } from '@/store/useStore';
-import { Heart, Eye, ShoppingBag, Check } from 'lucide-react';
+import { Eye, ShoppingBag, Check } from 'lucide-react';
 
 interface ProductCardProps {
   product: Product;
@@ -15,13 +15,10 @@ export function ProductCard({ product }: ProductCardProps) {
     formatPrice,
     addToCart,
     openQuickView,
-    toggleWishlist,
-    isInWishlist,
   } = useStore();
 
   const [selectedOption, setSelectedOption] = useState<string>(product.options[0] || '');
   const [isAdded, setIsAdded] = useState(false);
-  const isFavorite = isInWishlist(product.id);
 
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -61,21 +58,6 @@ export function ProductCard({ product }: ProductCardProps) {
           )}
 
           <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleWishlist(product.id);
-              }}
-              className={`p-2 rounded-full backdrop-blur-md transition-all duration-200 ${isFavorite
-                  ? 'bg-white text-black shadow-lg shadow-white/20'
-                  : 'bg-black/50 text-[#A1A1AA] hover:text-white hover:bg-black/80 border border-white/10'
-                }`}
-              aria-label={isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
-            >
-              <Heart className={`w-3.5 h-3.5 ${isFavorite ? 'fill-black' : ''}`} />
-            </button>
-
             <button
               type="button"
               onClick={(e) => {
@@ -137,8 +119,8 @@ export function ProductCard({ product }: ProductCardProps) {
                   type="button"
                   onClick={() => setSelectedOption(opt)}
                   className={`px-2 py-0.5 text-[10px] font-mono rounded-sm transition-all ${selectedOption === opt
-                      ? 'bg-white text-black font-bold'
-                      : 'bg-white/5 text-[#A1A1AA] hover:text-white border border-white/10'
+                    ? 'bg-white text-black font-bold'
+                    : 'bg-white/5 text-[#A1A1AA] hover:text-white border border-white/10'
                     }`}
                 >
                   {opt.split(' ')[0]}
@@ -157,8 +139,8 @@ export function ProductCard({ product }: ProductCardProps) {
             type="button"
             onClick={handleAdd}
             className={`w-full py-2.5 px-3 rounded-sm flex items-center justify-center gap-2 text-xs font-mono font-bold tracking-wider uppercase transition-all duration-200 ${isAdded
-                ? 'bg-emerald-500 text-black'
-                : 'bg-white/5 hover:bg-white text-white hover:text-black border border-white/15 hover:border-white'
+              ? 'bg-emerald-500 text-black'
+              : 'bg-white/5 hover:bg-white text-white hover:text-black border border-white/15 hover:border-white'
               }`}
           >
             {isAdded ? (

@@ -5,7 +5,7 @@ import { useStore } from '@/store/useStore';
 import { PRODUCTS, CATEGORIES_CONFIG } from '@/data/products';
 import { ProductCard } from './ProductCard';
 import { CategoryId } from '@/types';
-import { SlidersHorizontal, Sparkles, Search } from 'lucide-react';
+import { Sparkles, Search } from 'lucide-react';
 
 export function UniverseShowcase() {
   const { selectedCategory, setSelectedCategory, searchQuery, setSearchQuery } = useStore();
@@ -47,31 +47,6 @@ export function UniverseShowcase() {
             De sneakers arquitectónicos a extractos de perfume y prendas urbanas: cada silueta comparte la misma disciplina de diseño, materiales premium y acabados en plata líquida.
           </p>
         </div>
-
-        {/* Sorting Dropdown & Filter Count */}
-        <div className="flex items-center gap-4 self-start md:self-end">
-          <span className="text-xs font-mono text-[#71717A]">
-            {filteredProducts.length} {filteredProducts.length === 1 ? 'PIEZA' : 'PIEZAS'}
-          </span>
-          <div className="flex items-center gap-2 bg-[#0E0E12] border border-white/15 px-3 py-1.5 rounded-sm">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#71717A]" />
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-transparent text-xs font-mono text-white focus:outline-none cursor-pointer"
-            >
-              <option value="featured" className="bg-[#0E0E12] text-white">
-                Destacados
-              </option>
-              <option value="price-asc" className="bg-[#0E0E12] text-white">
-                Menor Precio
-              </option>
-              <option value="price-desc" className="bg-[#0E0E12] text-white">
-                Mayor Precio
-              </option>
-            </select>
-          </div>
-        </div>
       </div>
 
       {/* Category Tabs */}
@@ -84,8 +59,8 @@ export function UniverseShowcase() {
               type="button"
               onClick={() => setSelectedCategory(cat.id as CategoryId)}
               className={`whitespace-nowrap px-4 py-2.5 rounded-sm text-xs font-mono tracking-wider uppercase transition-all duration-200 flex items-center gap-2.5 ${isActive
-                  ? 'bg-white text-black font-bold shadow-lg shadow-white/10'
-                  : 'bg-[#0E0E12] text-[#A1A1AA] hover:text-white hover:bg-white/5 border border-white/10'
+                ? 'bg-white text-black font-bold shadow-lg shadow-white/10'
+                : 'bg-[#0E0E12] text-[#A1A1AA] hover:text-white hover:bg-white/5 border border-white/10'
                 }`}
             >
               <span>{cat.label}</span>

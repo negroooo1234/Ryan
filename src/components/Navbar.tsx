@@ -4,13 +4,12 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useStore } from '@/store/useStore';
-import { ShoppingBag, Heart, Search, X, Menu, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Search, X, Menu, ArrowRight } from 'lucide-react';
 
 export function Navbar() {
   const {
     cart,
     toggleCart,
-    wishlist,
     selectedCategory,
     setSelectedCategory,
     searchQuery,
@@ -36,8 +35,8 @@ export function Navbar() {
       {/* Main Glass Header */}
       <header
         className={`sticky top-0 z-40 transition-all duration-300 ${isScrolled
-            ? 'glass-header py-3.5 shadow-2xl shadow-black/60'
-            : 'bg-[#070708]/90 backdrop-blur-md py-5 border-b border-white/5'
+          ? 'glass-header py-3.5 shadow-2xl shadow-black/60'
+          : 'bg-[#070708]/90 backdrop-blur-md py-5 border-b border-white/5'
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -47,8 +46,8 @@ export function Navbar() {
               href="#coleccion"
               onClick={() => setSelectedCategory('all')}
               className={`text-xs font-semibold tracking-[0.16em] uppercase transition-colors ${selectedCategory === 'all'
-                  ? 'text-white border-b border-white pb-0.5'
-                  : 'text-[#A1A1AA] hover:text-white'
+                ? 'text-white border-b border-white pb-0.5'
+                : 'text-[#A1A1AA] hover:text-white'
                 }`}
             >
               Colección
@@ -57,8 +56,8 @@ export function Navbar() {
               href="#coleccion"
               onClick={() => setSelectedCategory('fashion')}
               className={`text-xs font-semibold tracking-[0.16em] uppercase transition-colors ${selectedCategory === 'fashion'
-                  ? 'text-white border-b border-white pb-0.5'
-                  : 'text-[#A1A1AA] hover:text-white'
+                ? 'text-white border-b border-white pb-0.5'
+                : 'text-[#A1A1AA] hover:text-white'
                 }`}
             >
               Fashion
@@ -67,8 +66,8 @@ export function Navbar() {
               href="#coleccion"
               onClick={() => setSelectedCategory('sneakers')}
               className={`text-xs font-semibold tracking-[0.16em] uppercase transition-colors ${selectedCategory === 'sneakers'
-                  ? 'text-white border-b border-white pb-0.5'
-                  : 'text-[#A1A1AA] hover:text-white'
+                ? 'text-white border-b border-white pb-0.5'
+                : 'text-[#A1A1AA] hover:text-white'
                 }`}
             >
               Sneakers
@@ -77,8 +76,8 @@ export function Navbar() {
               href="#coleccion"
               onClick={() => setSelectedCategory('fragrance')}
               className={`text-xs font-semibold tracking-[0.16em] uppercase transition-colors ${selectedCategory === 'fragrance'
-                  ? 'text-white border-b border-white pb-0.5'
-                  : 'text-[#A1A1AA] hover:text-white'
+                ? 'text-white border-b border-white pb-0.5'
+                : 'text-[#A1A1AA] hover:text-white'
                 }`}
             >
               Fragrance
@@ -87,8 +86,8 @@ export function Navbar() {
               href="#coleccion"
               onClick={() => setSelectedCategory('beauty')}
               className={`text-xs font-semibold tracking-[0.16em] uppercase transition-colors ${selectedCategory === 'beauty'
-                  ? 'text-white border-b border-white pb-0.5'
-                  : 'text-[#A1A1AA] hover:text-white'
+                ? 'text-white border-b border-white pb-0.5'
+                : 'text-[#A1A1AA] hover:text-white'
                 }`}
             >
               Beauty
@@ -136,20 +135,6 @@ export function Navbar() {
             >
               <Search className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-
-            {/* Wishlist Link */}
-            <Link
-              href="#coleccion"
-              className="relative text-[#A1A1AA] hover:text-white p-2 transition-colors hidden sm:block"
-              aria-label="Lista de deseos"
-            >
-              <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
-              {wishlist.length > 0 && (
-                <span className="absolute top-1 right-1 w-4 h-4 bg-white text-black font-bold text-[9px] rounded-full flex items-center justify-center leading-none font-mono">
-                  {wishlist.length}
-                </span>
-              )}
-            </Link>
 
             {/* Cart Button */}
             <button
