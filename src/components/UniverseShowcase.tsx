@@ -48,7 +48,7 @@ export function UniverseShowcase() {
           href="/tienda"
           className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white font-mono text-xs font-bold uppercase rounded-sm flex items-center gap-2 transition-all self-start md:self-end"
         >
-          <span>Ir a la Tienda & Filtros</span>
+          <span>Ir a la Tienda</span>
           <span>→</span>
         </a>
       </div>

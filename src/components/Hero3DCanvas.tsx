@@ -185,69 +185,58 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
 
-    let mouseX = 0;
-    let mouseY = 0;
     let targetRotX = 0;
     let targetRotY = 0;
+    let velocityRotX = 0;
+    let velocityRotY = 0;
     let isDragging = false;
-    let prevMouseX = 0;
-    let prevMouseY = 0;
+    let prevPointerX = 0;
+    let prevPointerY = 0;
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const handlePointerDown = (e: PointerEvent) => {
+      isDragging = true;
+      prevPointerX = e.clientX;
+      prevPointerY = e.clientY;
+      velocityRotX = 0;
+      velocityRotY = 0;
+      try {
+        container.setPointerCapture(e.pointerId);
+      } catch {}
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
       const rect = container.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width - 0.5;
-      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      const nx = (e.clientX - rect.left) / rect.width - 0.5;
+      const ny = (e.clientY - rect.top) / rect.height - 0.5;
 
-      mouseX = x * 2;
-      mouseY = y * 2;
+      cursorLight.position.x = nx * 7;
+      cursorLight.position.y = -ny * 7;
 
-      cursorLight.position.x = mouseX * 3.5;
-      cursorLight.position.y = -mouseY * 3.5;
+      if (isDragging) {
+        const deltaX = e.clientX - prevPointerX;
+        const deltaY = e.clientY - prevPointerY;
+        prevPointerX = e.clientX;
+        prevPointerY = e.clientY;
 
-      if (!isDragging) {
-        targetRotY = mouseX * 0.45;
-        targetRotX = -mouseY * 0.35;
+        velocityRotY = deltaX * 0.015;
+        velocityRotX = deltaY * 0.010;
+
+        targetRotY += velocityRotY;
+        targetRotX = Math.max(-0.85, Math.min(0.85, targetRotX + velocityRotX));
       }
     };
 
-    const handleMouseDown = (e: MouseEvent) => {
-      isDragging = true;
-      prevMouseX = e.clientX;
-      prevMouseY = e.clientY;
-    };
-
-    const handleMouseUp = () => {
+    const handlePointerUp = (e: PointerEvent) => {
       isDragging = false;
+      try {
+        container.releasePointerCapture(e.pointerId);
+      } catch {}
     };
 
-    const handleDragMove = (e: MouseEvent) => {
-      if (!isDragging) return;
-      const deltaX = e.clientX - prevMouseX;
-      const deltaY = e.clientY - prevMouseY;
-      prevMouseX = e.clientX;
-      prevMouseY = e.clientY;
-
-      targetRotY += deltaX * 0.01;
-      targetRotX += deltaY * 0.01;
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 0) return;
-      const touch = e.touches[0];
-      const rect = container.getBoundingClientRect();
-      const x = (touch.clientX - rect.left) / rect.width - 0.5;
-      const y = (touch.clientY - rect.top) / rect.height - 0.5;
-      targetRotY = x * 0.6;
-      targetRotX = -y * 0.4;
-      cursorLight.position.x = x * 4;
-      cursorLight.position.y = -y * 4;
-    };
-
-    container.addEventListener('mousemove', handleMouseMove, { passive: true });
-    container.addEventListener('mousedown', handleMouseDown, { passive: true });
-    window.addEventListener('mouseup', handleMouseUp, { passive: true });
-    window.addEventListener('mousemove', handleDragMove, { passive: true });
-    container.addEventListener('touchmove', handleTouchMove, { passive: true });
+    container.addEventListener('pointerdown', handlePointerDown);
+    container.addEventListener('pointermove', handlePointerMove);
+    container.addEventListener('pointerup', handlePointerUp);
+    container.addEventListener('pointercancel', handlePointerUp);
 
     let animationFrameId: number | undefined;
 
@@ -256,9 +245,27 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
 
       const elapsed = time * 0.001;
 
-      emblemGroup.rotation.y += (targetRotY - emblemGroup.rotation.y) * 0.08;
-      emblemGroup.rotation.x += (targetRotX - emblemGroup.rotation.x) * 0.08;
-      emblemGroup.position.y = Math.sin(elapsed * 1.2) * 0.12;
+      if (!isDragging) {
+        targetRotY += velocityRotY;
+        targetRotX += velocityRotX;
+
+        velocityRotY *= 0.94;
+        velocityRotX *= 0.92;
+
+        if (Math.abs(velocityRotY) < 0.001) {
+          velocityRotY = 0;
+          targetRotY += 0.006;
+        }
+
+        if (Math.abs(velocityRotX) < 0.001) {
+          velocityRotX = 0;
+          targetRotX += (0 - targetRotX) * 0.03;
+        }
+      }
+
+      emblemGroup.rotation.y += (targetRotY - emblemGroup.rotation.y) * 0.12;
+      emblemGroup.rotation.x += (targetRotX - emblemGroup.rotation.x) * 0.12;
+      emblemGroup.position.y = Math.sin(elapsed * 1.4) * 0.12;
 
       particles.rotation.y = elapsed * 0.02;
 
@@ -319,11 +326,10 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
       stopLoop();
       visibilityObserver?.disconnect();
       document.removeEventListener('visibilitychange', syncLoop);
-      container.removeEventListener('mousemove', handleMouseMove);
-      container.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('mousemove', handleDragMove);
-      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('pointerdown', handlePointerDown);
+      container.removeEventListener('pointermove', handlePointerMove);
+      container.removeEventListener('pointerup', handlePointerUp);
+      container.removeEventListener('pointercancel', handlePointerUp);
       window.removeEventListener('resize', handleResize);
 
       scene.traverse((object) => {
@@ -351,7 +357,7 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
     >
       <div
         ref={containerRef}
-        className="w-full h-full cursor-grab active:cursor-grabbing flex items-center justify-center"
+        className="w-full h-full cursor-grab active:cursor-grabbing flex items-center justify-center touch-pan-y"
       />
 
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none -z-10">
