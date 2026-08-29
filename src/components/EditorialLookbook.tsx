@@ -21,7 +21,9 @@ interface LookData {
 }
 
 export function EditorialLookbook() {
-  const { openQuickView, addToCart, formatPrice } = useStore();
+  const openQuickView = useStore((s) => s.openQuickView);
+  const addToCart = useStore((s) => s.addToCart);
+  const formatPrice = useStore((s) => s.formatPrice);
 
   const denimProduct = PRODUCTS.find((p) => p.id === 'rayn-fashion-02') || PRODUCTS[0];
 
@@ -84,7 +86,6 @@ export function EditorialLookbook() {
   return (
     <section id="lookbook" className="py-20 sm:py-28 bg-[#09090C] border-y border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
           <div>
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase text-white tracking-tight">
@@ -93,11 +94,8 @@ export function EditorialLookbook() {
           </div>
         </div>
 
-        {/* Lookbook Interactive Canvas */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Main Photo Canvas with Single Pants Hotspot */}
           <div className="lg:col-span-7 flex flex-col gap-4">
-            {/* Look Selector Tabs & Arrow Navigation */}
             <div className="flex items-center justify-between gap-2 flex-wrap">
               <div className="flex items-center gap-2 bg-[#0E0E12] p-1 rounded-sm border border-white/10">
                 {looks.map((l, idx) => (
@@ -115,7 +113,6 @@ export function EditorialLookbook() {
                 ))}
               </div>
 
-              {/* Prev / Next controls */}
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
@@ -139,19 +136,16 @@ export function EditorialLookbook() {
               </div>
             </div>
 
-            {/* Interactive Image Frame */}
             <div className="relative aspect-[3/4] max-h-[720px] rounded-sm overflow-hidden border border-white/15 shadow-2xl group bg-black select-none">
               <Image
                 src={currentLook.image}
                 alt={currentLook.title}
                 fill
-                priority
                 sizes="(max-width: 1024px) 100vw, 55vw"
                 className="object-cover object-center filter brightness-[0.92] contrast-[1.05] transition-all duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
 
-              {/* SINGLE PANTS HOTSPOT */}
               <div
                 style={{ top: currentLook.hotspot.top, left: currentLook.hotspot.left }}
                 className="absolute -translate-x-1/2 -translate-y-1/2 z-30"
@@ -215,7 +209,6 @@ export function EditorialLookbook() {
             </div>
           </div>
 
-          {/* Right Product Breakdown Card (Focused on the Pants) */}
           <div className="lg:col-span-5 space-y-5">
             <div className="p-6 bg-[#0E0E12] border border-white/10 rounded-sm">
               <div className="flex items-center justify-between pb-3 border-b border-white/10">
@@ -248,7 +241,6 @@ export function EditorialLookbook() {
                 Silueta de corte recto y amplio, con una caída limpia desde la cadera hasta el ruedo. Un pantalón cómodo y estructurado, pensado para caer naturalmente sobre las zapatillas y lograr un estilo urbano, relajado y moderno.
               </p>
 
-              {/* Color selection buttons */}
               <div className="mt-5 pt-4 border-t border-white/10 space-y-2">
                 <div className="text-[10px] font-mono uppercase tracking-wider text-[#71717A]">
                   Seleccionar Lavado:
@@ -264,14 +256,13 @@ export function EditorialLookbook() {
                           : 'bg-white/2 border-white/10 text-[#A1A1AA] hover:border-white/30'
                         }`}
                     >
-                      <div className="text-[10px] text-[#71717A]">0{idx + 1} //</div>
+                      <div className="text-[10px] text-[#71717A]">0{idx + 1} {'//'}</div>
                       <div className="truncate mt-0.5">{l.title}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Size Selector */}
               <div className="mt-4 space-y-2">
                 <div className="flex items-center justify-between text-[10px] font-mono text-[#71717A] uppercase">
                   <span>Talla (US):</span>
@@ -293,7 +284,6 @@ export function EditorialLookbook() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="mt-6 pt-4 border-t border-white/10 space-y-2">
                 <button
                   type="button"

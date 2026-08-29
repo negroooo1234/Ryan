@@ -37,7 +37,6 @@ export default function TiendaPage() {
 
       <Footer />
 
-      {/* Floating Drawers & Modals */}
       <ProductQuickViewModal />
       <CartDrawer />
       <ToastContainer />

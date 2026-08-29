@@ -11,10 +11,8 @@ import { ToastContainer } from '@/components/ToastContainer';
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#070708] text-[#F1F1F3] flex flex-col relative selection:bg-white selection:text-black">
-      {/* Navigation */}
       <Navbar />
 
-      {/* Main Experience */}
       <main className="flex-1">
         <Hero />
         <UniverseShowcase />
@@ -22,10 +20,8 @@ export default function Home() {
         <BrandManifesto />
       </main>
 
-      {/* Footer */}
       <Footer />
 
-      {/* Interactive Floating Modals & Drawers */}
       <ProductQuickViewModal />
       <CartDrawer />
       <ToastContainer />

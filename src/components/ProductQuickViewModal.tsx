@@ -3,30 +3,30 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useStore } from '@/store/useStore';
-import { X, ShoppingBag, Check, Shield, Truck, MessageCircle, Sparkles } from 'lucide-react';
+import { X, ShoppingBag, Check, MessageCircle } from 'lucide-react';
 
 export function ProductQuickViewModal() {
-  const {
-    quickViewProduct,
-    closeQuickView,
-    addToCart,
-    formatPrice,
-  } = useStore();
+  const quickViewProduct = useStore((s) => s.quickViewProduct);
+  const closeQuickView = useStore((s) => s.closeQuickView);
+  const addToCart = useStore((s) => s.addToCart);
+  const formatPrice = useStore((s) => s.formatPrice);
 
   const [selectedOption, setSelectedOption] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
 
+  const currentProductId = quickViewProduct?.id ?? null;
+  const [lastProductId, setLastProductId] = useState(currentProductId);
+  if (currentProductId !== lastProductId) {
+    setLastProductId(currentProductId);
+    setSelectedOption(quickViewProduct?.options[0] ?? '');
+    setQuantity(1);
+    setIsAdded(false);
+  }
+
   useEffect(() => {
-    if (quickViewProduct) {
-      setSelectedOption(quickViewProduct.options[0] || '');
-      setQuantity(1);
-      setIsAdded(false);
-      // Disable body scroll when modal is open
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
+    if (!quickViewProduct) return;
+    document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = 'unset';
     };
@@ -51,16 +51,13 @@ export function ProductQuickViewModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-black/85 backdrop-blur-md animate-fadeIn">
-      {/* Click outside backdrop */}
       <div
         className="fixed inset-0"
         onClick={closeQuickView}
         aria-hidden="true"
       />
 
-      {/* Modal Card */}
       <div className="relative w-full max-w-4xl bg-[#0E0E12] border border-white/20 rounded-sm shadow-2xl overflow-hidden z-10 flex flex-col md:flex-row max-h-[90vh]">
-        {/* Close Button */}
         <button
           type="button"
           onClick={closeQuickView}
@@ -70,7 +67,6 @@ export function ProductQuickViewModal() {
           <X className="w-5 h-5" />
         </button>
 
-        {/* Left: Product Media Gallery */}
         <div className="md:w-1/2 relative bg-[#141418] min-h-[320px] md:min-h-[460px] overflow-hidden">
           <Image
             src={quickViewProduct.image}
@@ -82,12 +78,12 @@ export function ProductQuickViewModal() {
           <div className="absolute inset-0 bg-gradient-to-t from-[#0E0E12]/80 via-transparent to-transparent md:hidden" />
         </div>
 
-        {/* Right: Product Details & Purchase Form */}
         <div className="md:w-1/2 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
           <div className="space-y-4">
             <div>
               <span className="text-[10px] font-mono tracking-[0.25em] text-[#94A3B8] uppercase">
-                // {quickViewProduct.categoryLabel}
+                {'// '}
+                {quickViewProduct.categoryLabel}
               </span>
               <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-1">
                 {quickViewProduct.name}
@@ -97,7 +93,6 @@ export function ProductQuickViewModal() {
               </p>
             </div>
 
-            {/* Price Row */}
             <div className="flex items-baseline gap-3 py-2 border-y border-white/10">
               <span className="text-2xl font-bold font-mono text-white">
                 {formatPrice(quickViewProduct.price || quickViewProduct.priceUSD || 0)}
@@ -112,12 +107,10 @@ export function ProductQuickViewModal() {
               </span>
             </div>
 
-            {/* Editorial Narrative */}
             <p className="text-xs text-[#A1A1AA] leading-relaxed font-light">
               {quickViewProduct.description}
             </p>
 
-            {/* Specs / Composition Grid */}
             <div className="bg-[#141418] border border-white/10 p-3.5 rounded-sm space-y-2">
               <div className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">
                 Ficha Técnica & Composición
@@ -130,7 +123,6 @@ export function ProductQuickViewModal() {
               ))}
             </div>
 
-            {/* Options Selection (Sizes / Bottles) */}
             <div className="space-y-2">
               <div className="flex justify-between text-xs font-mono">
                 <span className="text-[#A1A1AA] uppercase">
@@ -155,7 +147,6 @@ export function ProductQuickViewModal() {
               </div>
             </div>
 
-            {/* Quantity Selector */}
             <div className="flex items-center gap-3">
               <span className="text-xs font-mono text-[#A1A1AA] uppercase">Cantidad:</span>
               <div className="flex items-center border border-white/15 rounded-sm bg-white/5">
@@ -180,7 +171,6 @@ export function ProductQuickViewModal() {
             </div>
           </div>
 
-          {/* Action CTAs */}
           <div className="mt-6 pt-4 border-t border-white/10 space-y-2.5">
             <div className="flex gap-2">
               <button

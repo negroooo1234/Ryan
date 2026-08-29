@@ -4,35 +4,30 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useStore } from '@/store/useStore';
-import { ShoppingBag, Search, X, Menu, ArrowRight, MessageCircle } from 'lucide-react';
+import { ShoppingBag, Search, X, Menu, MessageCircle } from 'lucide-react';
 
 export function Navbar() {
-  const {
-    cart,
-    toggleCart,
-    selectedCategory,
-    setSelectedCategory,
-    searchQuery,
-    setSearchQuery,
-  } = useStore();
+  const totalCartCount = useStore((s) =>
+    s.cart.reduce((acc, item) => acc + item.quantity, 0)
+  );
+  const toggleCart = useStore((s) => s.toggleCart);
+  const searchQuery = useStore((s) => s.searchQuery);
+  const setSearchQuery = useStore((s) => s.setSearchQuery);
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  const totalCartCount = cart.reduce((acc, item) => acc + item.quantity, 0);
-
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <>
-      {/* Main Glass Header */}
       <header
         className={`sticky top-0 z-40 transition-all duration-300 ${isScrolled
           ? 'glass-header py-3.5 shadow-2xl shadow-black/60'
@@ -40,7 +35,6 @@ export function Navbar() {
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
-          {/* Left: Navigation Categories */}
           <nav className="hidden lg:flex items-center gap-6">
             <Link
               href="/tienda"
@@ -50,7 +44,6 @@ export function Navbar() {
             </Link>
           </nav>
 
-          {/* Center: Brand Monogram & Name */}
           <Link
             href="/"
             className="flex items-center gap-3 group focus:outline-none"
@@ -61,11 +54,13 @@ export function Navbar() {
                 src="/RAYN.PNG"
                 alt="Logo RN"
                 fill
+                sizes="40px"
+                priority
                 className="object-cover scale-110"
               />
             </div>
             <div className="flex flex-col">
-              <span className="text-xl sm:text-2xl font-black tracking-[0.25em] text-white select-none leading-none">
+              <span className="text-xl sm:text-2xl font-bold tracking-[0.25em] text-white select-none leading-none">
                 RAYN
               </span>
               <span className="text-[8px] font-mono tracking-[0.28em] text-[#71717A] uppercase leading-none mt-1">
@@ -74,9 +69,7 @@ export function Navbar() {
             </div>
           </Link>
 
-          {/* Right: Actions (Instagram, Search, Bag) */}
           <div className="flex items-center gap-3 sm:gap-5">
-            {/* Instagram Official Link */}
             <a
               href="https://www.instagram.com/rayn_py/"
               target="_blank"
@@ -91,7 +84,6 @@ export function Navbar() {
               </svg>
             </a>
 
-            {/* WhatsApp Official Link */}
             <a
               href="https://wa.me/595986454492"
               target="_blank"
@@ -102,7 +94,6 @@ export function Navbar() {
               <MessageCircle className="w-4 h-4" />
             </a>
 
-            {/* Search Trigger Button */}
             <button
               type="button"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -112,7 +103,6 @@ export function Navbar() {
               <Search className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
 
-            {/* Cart Button */}
             <button
               type="button"
               onClick={toggleCart}
@@ -128,7 +118,6 @@ export function Navbar() {
               </span>
             </button>
 
-            {/* Mobile Menu Button */}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -140,7 +129,6 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Search Bar Drawer */}
         {isSearchOpen && (
           <div className="bg-[#0E0E12] border-t border-b border-white/10 px-4 py-3 animate-fadeIn">
             <div className="max-w-4xl mx-auto flex items-center gap-3">
@@ -173,7 +161,6 @@ export function Navbar() {
           </div>
         )}
 
-        {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden bg-[#0A0A0D] border-b border-white/10 px-6 py-6 space-y-4">
             <div className="flex flex-col space-y-3 font-mono text-xs tracking-[0.18em] uppercase">

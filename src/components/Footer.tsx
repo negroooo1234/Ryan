@@ -1,12 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { useStore } from '@/store/useStore';
+import Image from 'next/image';
 import { ArrowUp, MessageCircle } from 'lucide-react';
 
 export function Footer() {
-  const { setSelectedCategory } = useStore();
-
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -14,20 +12,20 @@ export function Footer() {
   return (
     <footer className="bg-[#050507] border-t border-white/10 text-[#A1A1AA] pt-16 pb-12 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
-          {/* Col 1: Brand Identity */}
           <div className="lg:col-span-5 space-y-5">
             <div className="flex items-center gap-3">
               <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-sm border border-white/25 bg-black overflow-hidden flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.08)] group-hover:border-white/60 transition-all duration-300">
-                <img
+                <Image
                   src="/RAYN.PNG"
                   alt="Logo RN"
+                  fill
+                  sizes="40px"
                   className="object-cover scale-110"
                 />
               </div>
               <div>
-                <span className="text-2xl font-black tracking-[0.25em] text-white">RAYN</span>
+                <span className="text-2xl font-bold tracking-[0.25em] text-white">RAYN</span>
                 <span className="block text-[8px] font-mono tracking-[0.3em] text-[#71717A] uppercase">
                   PARAGUAY
                 </span>
@@ -42,7 +40,6 @@ export function Footer() {
               Envíos asegurados a todo el territorio paraguayo 🇵🇾.
             </p>
 
-            {/* CEOs & Fundadores */}
             <div className="pt-2 border-t border-white/10 space-y-1.5">
               <div className="text-[10px] font-mono uppercase tracking-widest text-[#71717A]">
                 CEOs & Fundadores:
@@ -98,7 +95,6 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Col 2: Categorías */}
           <div className="lg:col-span-3 space-y-3">
             <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
               Universo RAYN
@@ -155,7 +151,6 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Col 3: Filosofía / Valores Firma (Separada con más margen) */}
           <div className="lg:col-span-4 lg:pl-12 space-y-3">
             <h4 className="text-xs font-bold text-white uppercase tracking-wider font-mono">
               Valores Firma
@@ -171,7 +166,6 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Bar & Copyright */}
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-[#71717A]">
           <div>
             &copy; {new Date().getFullYear()} Todos los derechos reservados. &middot; Desarrollado por{' '}

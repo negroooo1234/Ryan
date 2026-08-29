@@ -5,17 +5,13 @@ import { useStore } from '@/store/useStore';
 import { X, Trash2, Plus, Minus, ShoppingBag, MessageSquare } from 'lucide-react';
 
 export function CartDrawer() {
-  const {
-    cart,
-    isCartOpen,
-    closeCart,
-    removeFromCart,
-    updateQuantity,
-    formatPrice,
-    clearCart,
-    addToast,
-    currency,
-  } = useStore();
+  const cart = useStore((s) => s.cart);
+  const isCartOpen = useStore((s) => s.isCartOpen);
+  const closeCart = useStore((s) => s.closeCart);
+  const removeFromCart = useStore((s) => s.removeFromCart);
+  const updateQuantity = useStore((s) => s.updateQuantity);
+  const formatPrice = useStore((s) => s.formatPrice);
+  const addToast = useStore((s) => s.addToast);
 
   if (!isCartOpen) return null;
 
@@ -47,7 +43,6 @@ export function CartDrawer() {
 
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
         <div className="w-screen max-w-md bg-[#0D0D10] border-l border-white/15 text-white flex flex-col shadow-2xl">
-          {/* Header */}
           <div className="p-6 border-b border-white/10 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <ShoppingBag className="w-5 h-5 text-white" />
@@ -69,7 +64,6 @@ export function CartDrawer() {
             </button>
           </div>
 
-          {/* Cart Items List */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {cart.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center space-y-4 py-12">
@@ -96,17 +90,16 @@ export function CartDrawer() {
                   key={item.id}
                   className="p-4 bg-[#141418] border border-white/10 rounded-sm flex gap-4 items-center group"
                 >
-                  {/* Thumbnail */}
                   <div className="relative w-18 h-18 rounded-sm overflow-hidden bg-black flex-shrink-0 border border-white/10">
                     <Image
                       src={item.image}
                       alt={item.name}
                       fill
+                      sizes="72px"
                       className="object-cover"
                     />
                   </div>
 
-                  {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-1">
                       <h4 className="text-xs font-bold text-white truncate">{item.name}</h4>
@@ -125,7 +118,6 @@ export function CartDrawer() {
                     </div>
 
                     <div className="mt-3 flex items-center justify-between">
-                      {/* Quantity Stepper */}
                       <div className="flex items-center border border-white/15 rounded-sm bg-white/5">
                         <button
                           type="button"
@@ -146,7 +138,6 @@ export function CartDrawer() {
                         </button>
                       </div>
 
-                      {/* Price */}
                       <span className="text-xs font-bold font-mono text-white">
                         {formatPrice((item.price || item.priceUSD || 0) * item.quantity)}
                       </span>
@@ -157,10 +148,8 @@ export function CartDrawer() {
             )}
           </div>
 
-          {/* Cart Footer */}
           {cart.length > 0 && (
             <div className="p-6 border-t border-white/10 bg-[#0A0A0D] space-y-4">
-              {/* Subtotal Calculations */}
               <div className="space-y-1.5 text-xs font-mono">
                 <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-white/10">
                   <span>TOTAL:</span>
@@ -168,7 +157,6 @@ export function CartDrawer() {
                 </div>
               </div>
 
-              {/* Action Button */}
               <div className="pt-2">
                 <button
                   type="button"

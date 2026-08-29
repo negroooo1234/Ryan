@@ -1,49 +1,45 @@
-'use client';
-
 import Link from 'next/link';
 import { ArrowDownRight, ArrowRight } from 'lucide-react';
-import { Hero3DCanvas } from './Hero3DCanvas';
 import { ChosoAsciiCanvas } from './ChosoAsciiCanvas';
+import { chosoSourceUrl } from '@/lib/imageUrl';
+
+const HERO_BACKGROUND = '/ascii-background.png';
 
 export function Hero() {
   return (
     <section className="relative min-h-[92vh] flex flex-col justify-end lg:justify-center overflow-hidden border-b border-white/10 bg-ink">
-      {/* Dynamic Background: CHOSO ASCII / Dither Canvas */}
+      <link
+        rel="preload"
+        as="image"
+        href={chosoSourceUrl(HERO_BACKGROUND)}
+        fetchPriority="high"
+      />
+
       <div className="absolute inset-0 z-0 overflow-hidden">
         <ChosoAsciiCanvas
-          imageSrc="/ascii-background.png"
+          imageSrc={HERO_BACKGROUND}
           className="w-full h-full"
         />
-        {/* Desktop Gradient: protects left text while leaving right visual 100% clear */}
         <div className="hidden lg:block absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/60 via-45% to-transparent pointer-events-none" />
-        
-        {/* Mobile Gradient: clear top to reveal models & hair, rich bottom for text contrast */}
         <div className="lg:hidden absolute inset-0 bg-gradient-to-t from-ink via-ink/85 via-42% to-transparent pointer-events-none" />
         <div className="lg:hidden absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-ink/20 to-transparent pointer-events-none" />
-
-        {/* Cinematic Vignettes */}
         <div className="hidden lg:block absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(7,7,8,0.75)_100%)] pointer-events-none" />
         <div className="lg:hidden absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_75%,rgba(7,7,8,0.2)_100%)] pointer-events-none" />
       </div>
 
-      {/* Ambient lighting */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.06),transparent_65%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.04),transparent_70%)]" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8 sm:pb-12 lg:py-12 flex-1 flex flex-col justify-end lg:justify-center w-full">
-        {/* Editorial composition: anchored to bottom on mobile, centered on desktop */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-end lg:items-center">
           <div className="lg:col-span-7 space-y-4 sm:space-y-6">
-
-            {/* Titular RAYN */}
             <h1 className="lg:-ml-[0.5rem] text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] font-black uppercase tracking-[-0.04em] leading-[0.88] text-white select-none flex items-baseline">
               <span className="text-chrome">RA  </span>
               <span className="text-white">YN</span>
             </h1>
 
-            {/* Sub-headline: Fashion • Beauty • Sneakers */}
             <div className="text-xs sm:text-sm font-mono tracking-[0.2em] text-[#94A3B8] uppercase">
               <span className="text-white font-bold">Tu estilo, en un solo lugar</span>
             </div>
@@ -70,11 +66,6 @@ export function Hero() {
               </Link>
             </div>
           </div>
-
-          {/* Hero3DCanvas (Medallón RN 3D) temporalmente oculto a petición del usuario */}
-          {/* <div className="lg:col-span-5 flex items-center justify-center lg:justify-end relative lg:translate-x-10 xl:translate-x-30">
-            <Hero3DCanvas />
-          </div> */}
         </div>
       </div>
     </section>

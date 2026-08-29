@@ -8,11 +8,11 @@ export interface Product {
   subtitle: string;
   category: 'fashion' | 'sneakers' | 'cases' | 'fragrance' | 'beauty';
   categoryLabel: string;
-  price: number; // Precio en Guaraníes (PYG ₲)
+  price: number;
   originalPrice?: number;
-  priceUSD?: number; // legacy alias
+  priceUSD?: number;
   originalPriceUSD?: number;
-  tag?: string; // 'DROP 01' | 'LIMITED EDITION' | 'SIGNATURE' | 'ICONIC'
+  tag?: string;
   isNew?: boolean;
   image: string;
   secondaryImage?: string;
@@ -22,7 +22,7 @@ export interface Product {
     label: string;
     value: string;
   }[];
-  optionsLabel: string; // 'Talla', 'Volumen', 'Presentación'
+  optionsLabel: string;
   options: string[];
   inStock: boolean;
   featured?: boolean;
@@ -33,8 +33,8 @@ export interface CartItem {
   productId: string;
   name: string;
   category: string;
-  price: number; // Precio en Guaraníes
-  priceUSD?: number; // legacy alias
+  price: number;
+  priceUSD?: number;
   image: string;
   selectedOption: string;
   quantity: number;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 interface Hero3DCanvasProps {
@@ -9,8 +9,6 @@ interface Hero3DCanvasProps {
 
 export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -20,7 +18,7 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
     try {
       renderer = new THREE.WebGLRenderer({
         alpha: true,
-        antialias: true, // Crisp anti-aliasing for smooth ring edges and geometries
+        antialias: true,
         powerPreference: 'high-performance',
         precision: 'highp',
         stencil: false,
@@ -34,7 +32,6 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
     const width = container.clientWidth || 500;
     const height = container.clientHeight || 500;
 
-    // Retina & High-DPI support (clamped to 2 for crisp native rendering without GPU overload)
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -42,12 +39,10 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(renderer.domElement);
 
-    // Scene & Camera
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 50);
     camera.position.set(0, 0, 9.8);
 
-    // Optimized Studio Lighting for Luxury Silver Reflections
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
     scene.add(ambientLight);
 
@@ -70,7 +65,6 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
     const emblemGroup = new THREE.Group();
     scene.add(emblemGroup);
 
-    // High quality procedurally generated reflection map
     const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256);
     const cubeCamera = new THREE.CubeCamera(0.1, 10, cubeRenderTarget);
     const envScene = new THREE.Scene();
@@ -101,7 +95,6 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
         logoTexture.anisotropy = Math.min(maxAniso, 16);
         logoTexture.needsUpdate = true;
 
-        // Front Logo Disc with ultra-smooth 128 radial segments (no visible polygon facets)
         const logoGeo = new THREE.CircleGeometry(2.26, 128);
         const logoMat = new THREE.MeshStandardMaterial({
           map: logoTexture,
@@ -115,7 +108,6 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
         logoMesh.position.z = 0.082;
         emblemGroup.add(logoMesh);
 
-        // Medallion Chassis (High-poly cylinder with 128 radial segments)
         const chassisGeo = new THREE.CylinderGeometry(2.32, 2.32, 0.16, 128);
         const chassisMat = new THREE.MeshStandardMaterial({
           color: 0x141417,
@@ -127,7 +119,6 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
         chassisMesh.rotation.x = Math.PI / 2;
         emblemGroup.add(chassisMesh);
 
-        // Polished Bezel Chamfer Rim (eliminates any sharp mesh joint artifacts)
         const bezelGeo = new THREE.TorusGeometry(2.32, 0.02, 24, 160);
         const bezelMat = new THREE.MeshStandardMaterial({
           color: 0xffffff,
@@ -139,7 +130,6 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
         bezelMesh.position.z = 0.08;
         emblemGroup.add(bezelMesh);
 
-        // Torus Rings (160 tubular segments & 24 radial segments for razor-sharp curves)
         const ringMat = new THREE.MeshStandardMaterial({
           color: 0xffffff,
           metalness: 1.0,
@@ -167,8 +157,6 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
         gyroRing.rotation.x = Math.PI / 3.5;
         gyroRingMesh = gyroRing;
         emblemGroup.add(gyroRing);
-
-        setIsLoaded(true);
       },
       undefined,
       (err) => {
@@ -176,7 +164,6 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
       }
     );
 
-    // Floating Particles (smooth ambient dust)
     const particlesCount = 40;
     const particlePositions = new Float32Array(particlesCount * 3);
     for (let i = 0; i < particlesCount * 3; i += 3) {
@@ -198,7 +185,6 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
 
-    // Mouse Interaction
     let mouseX = 0;
     let mouseY = 0;
     let targetRotX = 0;
@@ -263,16 +249,13 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
     window.addEventListener('mousemove', handleDragMove, { passive: true });
     container.addEventListener('touchmove', handleTouchMove, { passive: true });
 
-    // High-performance 60 FPS Animation Loop
-    let animationFrameId: number;
-    let lastRenderTime = 0;
+    let animationFrameId: number | undefined;
 
     const animate = (time: number) => {
       animationFrameId = requestAnimationFrame(animate);
 
       const elapsed = time * 0.001;
 
-      // Smooth damped rotation
       emblemGroup.rotation.y += (targetRotY - emblemGroup.rotation.y) * 0.08;
       emblemGroup.rotation.x += (targetRotX - emblemGroup.rotation.x) * 0.08;
       emblemGroup.position.y = Math.sin(elapsed * 1.2) * 0.12;
@@ -288,7 +271,39 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
 
     animationFrameId = requestAnimationFrame(animate);
 
-    // Resize Handler
+    const stopLoop = () => {
+      if (animationFrameId !== undefined) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = undefined;
+      }
+    };
+
+    const startLoop = () => {
+      if (animationFrameId === undefined) {
+        animationFrameId = requestAnimationFrame(animate);
+      }
+    };
+
+    let isOnScreen = true;
+    const syncLoop = () => {
+      if (isOnScreen && !document.hidden) startLoop();
+      else stopLoop();
+    };
+
+    const visibilityObserver =
+      typeof IntersectionObserver !== 'undefined'
+        ? new IntersectionObserver(
+            ([entry]) => {
+              isOnScreen = entry.isIntersecting;
+              syncLoop();
+            },
+            { threshold: 0 }
+          )
+        : null;
+    visibilityObserver?.observe(container);
+
+    document.addEventListener('visibilitychange', syncLoop);
+
     const handleResize = () => {
       if (!container) return;
       const newWidth = container.clientWidth;
@@ -301,13 +316,26 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
     window.addEventListener('resize', handleResize, { passive: true });
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      stopLoop();
+      visibilityObserver?.disconnect();
+      document.removeEventListener('visibilitychange', syncLoop);
       container.removeEventListener('mousemove', handleMouseMove);
       container.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
       window.removeEventListener('mousemove', handleDragMove);
       container.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', handleResize);
+
+      scene.traverse((object) => {
+        if (object instanceof THREE.Mesh || object instanceof THREE.Points) {
+          object.geometry?.dispose();
+          const material = object.material;
+          for (const m of Array.isArray(material) ? material : [material]) {
+            m?.map?.dispose();
+            m?.dispose();
+          }
+        }
+      });
 
       cubeRenderTarget.dispose();
       renderer.dispose();
@@ -320,8 +348,6 @@ export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
   return (
     <div
       className={`relative w-full ${className || 'h-[380px] sm:h-[480px] lg:h-[580px]'} flex items-center justify-center select-none`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       <div
         ref={containerRef}

@@ -3,10 +3,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { CartItem, CategoryId, CurrencyCode, Product, ToastMessage } from '@/types';
-import { CURRENCY, PRODUCTS } from '@/data/products';
+import { PRODUCTS } from '@/data/products';
 
 interface StoreState {
-  // Cart
   cart: CartItem[];
   isCartOpen: boolean;
   addToCart: (product: Product, selectedOption?: string, quantity?: number) => void;
@@ -17,33 +16,27 @@ interface StoreState {
   closeCart: () => void;
   toggleCart: () => void;
 
-  // Currency
   currency: CurrencyCode;
   setCurrency: (code: CurrencyCode) => void;
   formatPrice: (amountUSD: number) => string;
 
-  // Quick View Modal
   quickViewProduct: Product | null;
   openQuickView: (product: Product) => void;
   closeQuickView: () => void;
 
-  // Wishlist
   wishlist: string[];
   toggleWishlist: (productId: string) => void;
   isInWishlist: (productId: string) => boolean;
 
-  // Filters
   selectedCategory: CategoryId;
   setSelectedCategory: (cat: CategoryId) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 
-  // Toasts
   toasts: ToastMessage[];
   addToast: (title: string, description?: string, type?: 'success' | 'info' | 'cart') => void;
   removeToast: (id: string) => void;
 
-  // Lookbook active tab
   activeLookIndex: number;
   setActiveLookIndex: (idx: number) => void;
 }
@@ -117,7 +110,6 @@ export const useStore = create<StoreState>()(
       closeCart: () => set({ isCartOpen: false }),
       toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
 
-      // Currency & Price Formatting (Guaraníes PYG ₲)
       currency: 'PYG',
       setCurrency: (currency) => set({ currency }),
       formatPrice: (amount: number) => {
@@ -125,12 +117,10 @@ export const useStore = create<StoreState>()(
         return `₲ ${val.toLocaleString('es-PY')}`;
       },
 
-      // Quick View
       quickViewProduct: null,
       openQuickView: (product) => set({ quickViewProduct: product }),
       closeQuickView: () => set({ quickViewProduct: null }),
 
-      // Wishlist
       wishlist: [],
       toggleWishlist: (productId) => {
         const current = get().wishlist;
@@ -145,13 +135,11 @@ export const useStore = create<StoreState>()(
       },
       isInWishlist: (productId) => get().wishlist.includes(productId),
 
-      // Filters
       selectedCategory: 'all',
       setSelectedCategory: (selectedCategory) => set({ selectedCategory }),
       searchQuery: '',
       setSearchQuery: (searchQuery) => set({ searchQuery }),
 
-      // Toasts
       toasts: [],
       addToast: (title, description, type = 'info') => {
         const id = Math.random().toString(36).substring(2, 9);
@@ -164,7 +152,6 @@ export const useStore = create<StoreState>()(
       removeToast: (id) =>
         set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
 
-      // Lookbook
       activeLookIndex: 0,
       setActiveLookIndex: (activeLookIndex) => set({ activeLookIndex }),
     }),

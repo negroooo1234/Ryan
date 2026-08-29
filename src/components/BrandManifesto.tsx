@@ -1,18 +1,59 @@
 'use client';
 
-import { Hero3DCanvas } from './Hero3DCanvas';
+import { useEffect, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+
+const Hero3DCanvas = dynamic(
+  () => import('./Hero3DCanvas').then((m) => m.Hero3DCanvas),
+  { ssr: false }
+);
+
+const MEDALLION_ROOT_MARGIN = '400px';
+const MEDALLION_BOX = 'w-full h-[360px] sm:h-[440px] lg:h-[500px]';
 
 export function BrandManifesto() {
+  const medallionSlotRef = useRef<HTMLDivElement>(null);
+  const [isMedallionNear, setIsMedallionNear] = useState(false);
+
+  useEffect(() => {
+    const slot = medallionSlotRef.current;
+    if (!slot) return;
+
+    if (typeof IntersectionObserver === 'undefined') {
+      const frame = requestAnimationFrame(() => setIsMedallionNear(true));
+      return () => cancelAnimationFrame(frame);
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsMedallionNear(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: MEDALLION_ROOT_MARGIN }
+    );
+
+    observer.observe(slot);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section id="universo" className="py-24 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Manifesto Headline Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        {/* Left: Free Floating Interactive 3D Medallion */}
-        <div className="lg:col-span-5 flex items-center justify-center relative">
-          <Hero3DCanvas className="w-full h-[360px] sm:h-[440px] lg:h-[500px]" />
+        <div
+          ref={medallionSlotRef}
+          className="lg:col-span-5 flex items-center justify-center relative"
+        >
+          {isMedallionNear ? (
+            <Hero3DCanvas className={MEDALLION_BOX} />
+          ) : (
+            <div className={`relative ${MEDALLION_BOX} flex items-center justify-center`}>
+              <div className="w-72 h-72 sm:w-96 sm:h-96 rounded-full bg-gradient-to-tr from-white/10 via-white/5 to-transparent blur-3xl opacity-60" />
+            </div>
+          )}
         </div>
 
-        {/* Right: The Brand Creed */}
         <div className="lg:col-span-7 space-y-6">
           <h2 className="text-4xl sm:text-6xl font-black uppercase tracking-tight text-white leading-[0.95]">
             Fino, pero <br />
@@ -31,9 +72,7 @@ export function BrandManifesto() {
             Operamos de manera digital con envíos asegurados a todo el territorio paraguayo, acercándote los drops más cotizados y las fragancias virales más deseadas con garantía de autenticidad para que tengas tu estilo en un solo lugar.
           </p>
 
-          {/* Channels & Leadership Distinction */}
           <div className="pt-3 border-t border-white/10 space-y-2.5">
-            {/* Empresa Oficial */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <span className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider sm:min-w-[120px]">
                 CUENTA EMPRESA:
@@ -56,7 +95,6 @@ export function BrandManifesto() {
               </a>
             </div>
 
-            {/* CEOs & Fundadores */}
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <span className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider sm:min-w-[120px]">
                 CEOS & DIRECCIÓN:

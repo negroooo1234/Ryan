@@ -5,25 +5,25 @@ import './globals.css';
 const syne = Syne({
   variable: '--font-syne',
   subsets: ['latin'],
-  weight: ['400', '600', '700', '800'],
   display: 'swap',
 });
 
 const jakarta = Plus_Jakarta_Sans({
   variable: '--font-jakarta',
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
 });
 
 const spaceGrotesk = Space_Grotesk({
   variable: '--font-space',
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
   display: 'swap',
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rayn.com.py'
+  ),
   title: 'RAYN',
   description:
     'Tu estilo, en un solo lugar. Curaduría y reventa exclusiva de ropa streetwear, sneakers, fundas para iPhone y perfumes árabes & nicho. Fundada por Nayhara Sanabria y Rodrigo Hidalgo (Presidente Franco, Paraguay). Envíos a todo el país. Instagram: @rayn_py.',
@@ -52,6 +52,17 @@ export const metadata: Metadata = {
       'Paraguay, envíos a todo el país 📦📤. Instagram Oficial: @rayn_py. CEOs: @nayysanabria & @rodrigo_hidalgo06.',
     type: 'website',
     images: ['/images/campaign.jpg'],
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/RAYN-2.svg', type: 'image/svg+xml' },
+      { url: '/RAYN-2.png' },
+      { url: '/RAYN-2.png', sizes: '32x32', type: 'image/png' },
+      { url: '/RAYN-2.png', sizes: '16x16', type: 'image/png' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/RAYN-2.png',
   },
 };
 

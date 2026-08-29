@@ -4,7 +4,8 @@ import { useStore } from '@/store/useStore';
 import { CheckCircle2, Info, ShoppingBag, X } from 'lucide-react';
 
 export function ToastContainer() {
-  const { toasts, removeToast } = useStore();
+  const toasts = useStore((s) => s.toasts);
+  const removeToast = useStore((s) => s.removeToast);
 
   if (toasts.length === 0) return null;
 

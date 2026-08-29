@@ -11,11 +11,9 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
-  const {
-    formatPrice,
-    addToCart,
-    openQuickView,
-  } = useStore();
+  const formatPrice = useStore((s) => s.formatPrice);
+  const addToCart = useStore((s) => s.addToCart);
+  const openQuickView = useStore((s) => s.openQuickView);
 
   const [selectedOption, setSelectedOption] = useState<string>(product.options[0] || '');
   const [isAdded, setIsAdded] = useState(false);
@@ -32,7 +30,6 @@ export function ProductCard({ product }: ProductCardProps) {
       onClick={() => openQuickView(product)}
       className="group relative bg-[#0E0E12] border border-white/10 hover:border-white/35 rounded-sm overflow-hidden flex flex-col justify-between transition-all duration-300 cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.7)]"
     >
-      {/* Top Image Container */}
       <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#141418]">
         <Image
           src={product.image}
@@ -42,10 +39,8 @@ export function ProductCard({ product }: ProductCardProps) {
           className="object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
         />
 
-        {/* Gradient Overlay for subtle depth */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0E0E12] via-transparent to-black/20 opacity-80" />
 
-        {/* Top Actions */}
         <div className="absolute top-3 right-3 flex items-center gap-1.5 pointer-events-auto">
           <button
             type="button"
@@ -60,15 +55,14 @@ export function ProductCard({ product }: ProductCardProps) {
           </button>
         </div>
 
-        {/* Category pill on image bottom */}
         <div className="absolute bottom-2.5 left-3">
           <span className="text-[10px] font-mono tracking-widest text-[#94A3B8] uppercase">
-            // {product.categoryLabel}
+            {'// '}
+            {product.categoryLabel}
           </span>
         </div>
       </div>
 
-      {/* Card Info & Actions */}
       <div className="p-5 flex-1 flex flex-col justify-between">
         <div>
           <div className="flex items-start justify-between gap-2">
@@ -93,9 +87,7 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         </div>
 
-        {/* Options & Quick Add - ONLY FOR FASHION (ROPA) AND SNEAKERS */}
         <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
-          {/* Quick Option Selector */}
           {(product.category === 'fashion' || product.category === 'sneakers') && product.options?.length > 0 && (
             <div className="flex items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
               <span className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">
@@ -124,7 +116,6 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
 
-          {/* Action Button */}
           <button
             type="button"
             onClick={handleAdd}

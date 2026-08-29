@@ -1,21 +1,21 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useStore } from '@/store/useStore';
 import { PRODUCTS, CATEGORIES_CONFIG } from '@/data/products';
 import { ProductCard } from './ProductCard';
 import { CategoryId } from '@/types';
-import { Sparkles, Search } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export function UniverseShowcase() {
-  const { selectedCategory, setSelectedCategory, searchQuery, setSearchQuery } = useStore();
-  const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc'>('featured');
+  const selectedCategory = useStore((s) => s.selectedCategory);
+  const setSelectedCategory = useStore((s) => s.setSelectedCategory);
+  const searchQuery = useStore((s) => s.searchQuery);
+  const setSearchQuery = useStore((s) => s.setSearchQuery);
 
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((p) => {
-      // Category match
       const categoryMatch = selectedCategory === 'all' || p.category === selectedCategory;
-      // Search match
       const searchMatch =
         !searchQuery ||
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -24,16 +24,12 @@ export function UniverseShowcase() {
         p.description.toLowerCase().includes(searchQuery.toLowerCase());
 
       return categoryMatch && searchMatch;
-    }).sort((a, b) => {
-      if (sortBy === 'price-asc') return (a.price || a.priceUSD || 0) - (b.price || b.priceUSD || 0);
-      if (sortBy === 'price-desc') return (b.price || b.priceUSD || 0) - (a.price || a.priceUSD || 0);
-      return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
-    });
-  }, [selectedCategory, searchQuery, sortBy]);
+    })
+      .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+  }, [selectedCategory, searchQuery]);
 
   return (
     <section id="coleccion" className="py-20 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/10 pb-8">
         <div>
           <div className="flex items-center gap-2 text-xs font-mono text-[#CBD5E1] tracking-[0.25em] uppercase mb-2">
@@ -57,7 +53,6 @@ export function UniverseShowcase() {
         </a>
       </div>
 
-      {/* Category Tabs */}
       <div className="mt-8 flex items-center gap-2 overflow-x-auto pb-3 scrollbar-none">
         {CATEGORIES_CONFIG.map((cat) => {
           const isActive = selectedCategory === cat.id;
@@ -83,7 +78,6 @@ export function UniverseShowcase() {
         })}
       </div>
 
-      {/* Active Search Banner if searching */}
       {searchQuery && (
         <div className="mt-4 flex items-center justify-between bg-white/5 border border-white/10 px-4 py-2 rounded text-xs font-mono">
           <span>Resultados para: &ldquo;{searchQuery}&rdquo;</span>
@@ -97,7 +91,6 @@ export function UniverseShowcase() {
         </div>
       )}
 
-      {/* Products Grid */}
       {filteredProducts.length > 0 ? (
         <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
           {filteredProducts.map((product) => (

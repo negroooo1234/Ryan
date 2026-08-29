@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { PRODUCTS } from '@/data/products';
 import { ProductCard } from '@/components/ProductCard';
@@ -11,25 +11,24 @@ import {
   X,
   RotateCcw,
   Tag,
-  ArrowUpDown,
 } from 'lucide-react';
 
 export function CatalogView() {
   const searchParams = useSearchParams();
   const urlCategory = searchParams.get('cat') as CategoryId | null;
 
-  // State
   const [selectedCategory, setSelectedCategory] = useState<CategoryId>(urlCategory || 'all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'newest'>('featured');
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(true);
 
-  // Sync with URL params if changed
-  useEffect(() => {
+  const [lastSyncedCategory, setLastSyncedCategory] = useState(urlCategory);
+  if (urlCategory !== lastSyncedCategory) {
+    setLastSyncedCategory(urlCategory);
     if (urlCategory) {
       setSelectedCategory(urlCategory);
     }
-  }, [urlCategory]);
+  }
 
   const categories = [
     { id: 'all' as CategoryId, label: 'Todos los Productos', icon: '✦' },
@@ -39,15 +38,12 @@ export function CatalogView() {
     { id: 'fragrance' as CategoryId, label: 'Perfumes', icon: '✦' },
   ];
 
-  // Filtering Logic
   const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((product) => {
-      // 1. Category Filter
       if (selectedCategory !== 'all' && product.category !== selectedCategory) {
         return false;
       }
 
-      // 2. Search Query Filter
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matchesName = product.name.toLowerCase().includes(q);
@@ -81,7 +77,6 @@ export function CatalogView() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
-      {/* Page Header */}
       <div className="border-b border-white/10 pb-8 mb-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
@@ -99,9 +94,7 @@ export function CatalogView() {
         </div>
       </div>
 
-      {/* Main Layout Grid (Filters Sidebar + Products Grid) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Mobile Filter Toggle */}
         <div className="lg:hidden flex items-center justify-between gap-4 bg-[#0E0E12] p-3 rounded-sm border border-white/10">
           <button
             type="button"
@@ -120,12 +113,10 @@ export function CatalogView() {
           </span>
         </div>
 
-        {/* Filters Sidebar (Desktop & Mobile Drawer) */}
         <aside
           className={`lg:col-span-3 space-y-6 lg:sticky lg:top-24 ${isMobileFilterOpen ? 'block' : 'hidden lg:block'
             }`}
         >
-          {/* Search Box */}
           <div className="p-5 bg-[#0E0E12] border border-white/10 rounded-sm space-y-3">
             <label htmlFor="catalog-search" className="block text-xs font-bold font-mono text-white uppercase tracking-wider">
               Buscar en Catálogo
@@ -153,7 +144,6 @@ export function CatalogView() {
             </div>
           </div>
 
-          {/* Category Filter */}
           <div className="p-5 bg-[#0E0E12] border border-white/10 rounded-sm space-y-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold font-mono text-white uppercase tracking-wider">
@@ -197,7 +187,6 @@ export function CatalogView() {
             </div>
           </div>
 
-          {/* Reset Filters Button */}
           {hasActiveFilters && (
             <button
               type="button"
@@ -209,7 +198,6 @@ export function CatalogView() {
             </button>
           )}
 
-          {/* WhatsApp Concierge Banner */}
           <div className="p-4 bg-[#0A0A0D] border border-emerald-500/20 rounded-sm space-y-2">
             <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono font-bold">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -229,15 +217,11 @@ export function CatalogView() {
           </div>
         </aside>
 
-        {/* Product Grid Area */}
         <main className="lg:col-span-9 space-y-6">
-          {/* Active Filter Chips & Sorting Bar */}
           <div className="p-4 bg-[#0E0E12] border border-white/10 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            {/* Active Filters Display */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs font-mono text-[#71717A] uppercase">Filtros:</span>
 
-              {/* Category chip */}
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/10 border border-white/15 rounded-sm text-[11px] font-mono text-white">
                 <Tag className="w-3 h-3 text-emerald-400" />
                 <span>
@@ -255,7 +239,6 @@ export function CatalogView() {
                 )}
               </span>
 
-              {/* Search query chip */}
               {searchQuery && (
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/10 border border-white/15 rounded-sm text-[11px] font-mono text-white">
                   <span>&ldquo;{searchQuery}&rdquo;</span>
@@ -270,10 +253,8 @@ export function CatalogView() {
                 </span>
               )}
             </div>
-
           </div>
 
-          {/* Products Grid */}
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredProducts.map((product) => (
@@ -281,7 +262,6 @@ export function CatalogView() {
               ))}
             </div>
           ) : (
-            /* Empty State */
             <div className="py-20 px-4 text-center bg-[#0E0E12] border border-white/10 rounded-sm space-y-4">
               <div className="w-12 h-12 rounded-full bg-white/5 border border-white/15 flex items-center justify-center mx-auto text-[#71717A]">
                 <Search className="w-6 h-6" />

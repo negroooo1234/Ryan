@@ -1,38 +1,22 @@
 @import "tailwindcss";
 
-/* =============================================================
-   RAYN — DESIGN TOKENS
-   Sistema: negro carbón + plata + acento óxido.
-   El óxido NUNCA se usa en superficies grandes: solo líneas,
-   indicadores, estados activos y micro-marcas.
-   ============================================================= */
-
 @theme inline {
-  /* --- Tipografía ---------------------------------------------
-     `inline` es necesario: next/font define --font-* en <html>,
-     no en :root. Sin esto, font-sans / font-mono caían a los
-     defaults de Tailwind y ni Jakarta ni Space Grotesk llegaban
-     a pintarse nunca. */
   --font-sans: var(--font-jakarta), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-mono: var(--font-space), ui-monospace, SFMono-Regular, Menlo, monospace;
   --font-display: var(--font-syne), "Segoe UI", sans-serif;
-  --font-poster: var(--font-barlow), "Arial Narrow", sans-serif;
 
-  /* --- Superficies (consolida los 9 casi-negros previos) ------ */
   --color-ink: #070708;
   --color-coal: #0B0B0E;
   --color-carbon: #101014;
   --color-cement: #17171C;
   --color-graphite: #24242A;
 
-  /* --- Tinta --------------------------------------------------- */
   --color-bone: #EDEDF0;
   --color-silver: #CBD5E1;
   --color-smoke: #A1A1AA;
   --color-ash: #85858E;
   --color-steel: #666670;
 
-  /* --- Óxido / vino (único acento cromático) ------------------- */
   --color-oxide-deep: oklch(0.34 0.11 27);
   --color-oxide: oklch(0.5 0.16 28);
   --color-oxide-lit: oklch(0.68 0.17 30);
@@ -48,7 +32,6 @@
     --bg-card: #101014;
     --bg-card-hover: #17171C;
 
-    /* Líneas: 4 niveles con intención, no 8 opacidades sueltas */
     --line-hair: rgba(255, 255, 255, 0.07);
     --line: rgba(255, 255, 255, 0.12);
     --line-strong: rgba(255, 255, 255, 0.24);
@@ -77,69 +60,15 @@
     letter-spacing: -0.03em;
   }
 
-  /* Foco visible y coherente. Antes había focus:outline-none
-     suelto en varios sitios sin sustituto. */
   :focus-visible {
     outline: 2px solid var(--color-oxide-lit);
     outline-offset: 3px;
   }
 
-  /* El header sticky mide ~76px: evita que las anclas dejen los
-     títulos de sección tapados. */
   [id] {
     scroll-margin-top: 96px;
   }
 }
-
-/* =============================================================
-   VOZ EDITORIAL / PÓSTER
-   Barlow Condensed. Solo en marcadores, números, categorías y
-   texto vertical. Nunca en párrafos.
-   ============================================================= */
-
-.type-poster {
-  font-family: var(--font-poster);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  line-height: 0.9;
-}
-
-.type-marker {
-  font-family: var(--font-poster);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.78rem;
-  line-height: 1;
-}
-
-/* Índice editorial: 001 / 002 / 003 */
-.type-index {
-  font-family: var(--font-poster);
-  font-weight: 700;
-  font-size: clamp(2.6rem, 6vw, 4.6rem);
-  line-height: 0.78;
-  letter-spacing: -0.02em;
-  color: transparent;
-  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.22);
-}
-
-/* Texto vertical de margen */
-.type-vertical {
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  font-family: var(--font-poster);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.32em;
-  font-size: 0.68rem;
-  line-height: 1;
-}
-
-/* =============================================================
-   CHROME / PLATA LÍQUIDA  (identidad existente — intacta)
-   ============================================================= */
 
 .text-chrome {
   background: linear-gradient(135deg, #FFFFFF 0%, #E2E8F0 25%, #94A3B8 50%, #FFFFFF 75%, #64748B 100%);
@@ -148,151 +77,12 @@
   color: transparent;
 }
 
-.text-chrome-bright {
-  background: linear-gradient(180deg, #FFFFFF 20%, #CBD5E1 60%, #94A3B8 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.border-chrome-glow {
-  border: 1px solid rgba(226, 232, 240, 0.28);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 20px rgba(255, 255, 255, 0.03);
-}
-
-.glass-panel {
-  background: rgba(16, 16, 20, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--line);
-}
-
 .glass-header {
   background: rgba(7, 7, 8, 0.82);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--line-hair);
 }
-
-/* =============================================================
-   TEXTURAS
-   Muy sutiles, sin coste de red (SVG inline) y sin repintado:
-   son backgrounds estáticos sobre pseudo-elementos.
-   ============================================================= */
-
-/* Grano de película — hero, banners, planchas */
-.tex-grain::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  opacity: 0.055;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23g)'/%3E%3C/svg%3E");
-  background-size: 160px 160px;
-}
-
-/* Scanlines / VHS — solo separadores y bandas estrechas */
-.tex-scan::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background-image: repeating-linear-gradient(180deg,
-      rgba(255, 255, 255, 0.03) 0px,
-      rgba(255, 255, 255, 0.03) 1px,
-      transparent 1px,
-      transparent 3px);
-}
-
-/* Cemento — superficie de card, casi imperceptible */
-.tex-cement {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23c)' opacity='0.5'/%3E%3C/svg%3E");
-  background-size: 120px 120px;
-  background-blend-mode: overlay;
-}
-
-/* =============================================================
-   MICROELEMENTOS EDITORIALES
-   ============================================================= */
-
-/* Filete con segmento de óxido a la izquierda */
-.rule-oxide {
-  height: 1px;
-  border: 0;
-  background: linear-gradient(90deg,
-      var(--color-oxide) 0,
-      var(--color-oxide) 56px,
-      var(--line) 56px,
-      var(--line) 100%);
-}
-
-/* Marca de registro tipo imprenta */
-.mark-reg {
-  position: relative;
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  flex: none;
-}
-
-.mark-reg::before,
-.mark-reg::after {
-  content: "";
-  position: absolute;
-  background: var(--color-oxide-lit);
-}
-
-.mark-reg::before {
-  left: 50%;
-  top: 0;
-  width: 1px;
-  height: 100%;
-  transform: translateX(-50%);
-}
-
-.mark-reg::after {
-  top: 50%;
-  left: 0;
-  height: 1px;
-  width: 100%;
-  transform: translateY(-50%);
-}
-
-/* Etiqueta pequeña de archivo */
-.tag-archive {
-  font-family: var(--font-poster);
-  font-weight: 600;
-  font-size: 0.66rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--color-smoke);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Indicador de estado activo (pestañas, nav) */
-.ind-active {
-  position: relative;
-}
-
-.ind-active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 2px;
-  background: var(--color-oxide-lit);
-}
-
-/* =============================================================
-   BOTONES
-   Sin translateY (nada salta). La microinteracción es un barrido
-   horizontal + desplazamiento de la flecha.
-   ============================================================= */
 
 .btn-rayn-primary {
   position: relative;
@@ -368,7 +158,6 @@
   border-color: #FFFFFF;
 }
 
-/* La flecha acompaña al barrido */
 .btn-rayn-primary svg,
 .btn-rayn-outline svg {
   transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -379,48 +168,6 @@
   transform: translateX(4px);
 }
 
-/* =============================================================
-   ANIMACIONES
-   ============================================================= */
-
-@keyframes marquee {
-  0% {
-    transform: translateX(0%);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  display: flex;
-  width: max-content;
-  animation: marquee 35s linear infinite;
-}
-
-.animate-marquee:hover {
-  animation-play-state: paused;
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-.shimmer-badge {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.18) 50%, rgba(255, 255, 255, 0.03) 100%);
-  background-size: 200% 100%;
-  animation: shimmer 4s infinite linear;
-}
-
-/* Faltaban en el CSS: los modales, el drawer y los toasts se
-   montaban en seco aunque el markup ya pedía estas clases. */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -451,35 +198,6 @@
   animation: slideUp 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Reveal al entrar en viewport. CSS puro, cero JS, cero listeners.
-   Sin soporte (Safari/Firefox) el contenido se ve normal. */
-@keyframes revealUp {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@supports (animation-timeline: view()) {
-  .reveal {
-    animation: revealUp linear both;
-    animation-timeline: view();
-    animation-range: entry 8% cover 26%;
-  }
-
-  .reveal-slow {
-    animation: revealUp linear both;
-    animation-timeline: view();
-    animation-range: entry 4% cover 34%;
-  }
-}
-
-/* Utilidad ausente que ya usaban las pestañas de categoría */
 .scrollbar-none {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -488,10 +206,6 @@
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
-
-/* =============================================================
-   SCROLLBAR
-   ============================================================= */
 
 ::-webkit-scrollbar {
   width: 6px;
@@ -510,18 +224,10 @@
   background: var(--color-oxide);
 }
 
-/* =============================================================
-   MOVIMIENTO REDUCIDO
-   ============================================================= */
-
 @media (prefers-reduced-motion: reduce) {
-
-  .animate-marquee,
-  .shimmer-badge,
   .animate-fadeIn,
   .animate-slideUp,
-  .reveal,
-  .reveal-slow {
+  .animate-choso-pulse {
     animation: none;
   }
 
@@ -533,12 +239,7 @@
   }
 }
 
-/* =============================================================
-   CHOSO DITHER FX — GPU ACCELERATED PULSE
-   ============================================================= */
-
 @keyframes chosoPulse {
-
   0%,
   100% {
     opacity: 0.85;
@@ -554,4 +255,4 @@
 .animate-choso-pulse {
   animation: chosoPulse 3.5s ease-in-out infinite;
   will-change: opacity, transform;
-}
+}

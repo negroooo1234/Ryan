@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { chosoSourceUrl } from '@/lib/imageUrl';
 
 export interface ChosoConfig {
   renderMode: 'cross' | 'dither';
@@ -51,11 +52,11 @@ export function ChosoAsciiCanvas({
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
-  // Load Image
   useEffect(() => {
     const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.src = `${imageSrc}?v=${Date.now()}`;
+    img.src = chosoSourceUrl(imageSrc);
+    img.decoding = 'async';
+    img.fetchPriority = 'high';
     img.onload = () => {
       imgRef.current = img;
       setIsLoaded(true);
@@ -65,7 +66,6 @@ export function ChosoAsciiCanvas({
     };
   }, [imageSrc]);
 
-  // High-Quality GPU Accelerated Static Bake Render
   const renderBake = useCallback(() => {
     const canvas = canvasRef.current;
     const img = imgRef.current;
@@ -101,12 +101,11 @@ export function ChosoAsciiCanvas({
     sampleCtx.imageSmoothingQuality = 'high';
 
     if (isMobile) {
-      // Zoomed-in upper body framing on mobile for enhanced facial and hair definition
       const zoomFactor = 1.32;
       const cropW = img.naturalWidth / zoomFactor;
       const cropH = img.naturalHeight / zoomFactor;
-      const cropX = (img.naturalWidth - cropW) * 0.50; // Perfect horizontal centering
-      const cropY = 0; // Anchored at top to preserve full hair and head volume
+      const cropX = (img.naturalWidth - cropW) * 0.50;
+      const cropY = 0;
       const drawW = cols;
       const drawH = Math.round(cols * (cropH / cropW));
       const topOffset = Math.round(rows * 0.008);
@@ -153,7 +152,6 @@ export function ChosoAsciiCanvas({
       }
     }
 
-    // Standard Sobel Edge Filter
     const edgeScale = (isMobile ? 18 : SIGNATURE_CONFIG.edgeEmphasis) / 100;
     for (let r = 1; r < rows - 1; r++) {
       for (let c = 1; c < cols - 1; c++) {
@@ -174,12 +172,10 @@ export function ChosoAsciiCanvas({
       }
     }
 
-    // Render Clean High-Definition Dither to Canvas
     ctx.clearRect(0, 0, width, height);
     ctx.save();
 
     const baseArm = Math.max(1, Math.round(cellSize * 0.42));
-    const hasChromatic = SIGNATURE_CONFIG.chromatic;
     const minLumThreshold = isMobile ? 0.055 : 0.075;
 
     for (let r = 0; r < rows; r++) {
@@ -201,11 +197,9 @@ export function ChosoAsciiCanvas({
           ctx.fillStyle = `rgb(${v},${v},${v})`;
 
           if (SIGNATURE_CONFIG.renderMode === 'cross') {
-            // Draw Cross (+)
             ctx.fillRect(cx - arm, cy, arm * 2 + 1, 1);
             ctx.fillRect(cx, cy - arm, 1, arm * 2 + 1);
           } else {
-            // Draw Dot (■)
             const dotSize = Math.max(1, Math.round(cellSize * normLum));
             ctx.fillRect(cx - (dotSize >> 1), cy - (dotSize >> 1), dotSize, dotSize);
           }
@@ -216,17 +210,23 @@ export function ChosoAsciiCanvas({
     ctx.restore();
   }, []);
 
-  // Trigger Bake Render upon Load or Window Resize
   useEffect(() => {
     if (!isLoaded) return;
     renderBake();
 
+    let resizeTimer: number | undefined;
+    let lastWidth = window.innerWidth;
+
     const handleResize = () => {
-      renderBake();
+      if (window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(renderBake, 150);
     };
 
     window.addEventListener('resize', handleResize, { passive: true });
     return () => {
+      window.clearTimeout(resizeTimer);
       window.removeEventListener('resize', handleResize);
     };
   }, [isLoaded, renderBake]);
