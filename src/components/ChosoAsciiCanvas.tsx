@@ -28,7 +28,7 @@ export const SIGNATURE_CONFIG: ChosoConfig = {
   removeStudioBg: false,
   brightness: 4,
   contrast: 45,
-  chromatic: true,
+  chromatic: false,
   animated: false,
   baseFill: 12,
   horizontalAlign: 65,
@@ -82,7 +82,8 @@ export function ChosoAsciiCanvas({
     canvas.width = width;
     canvas.height = height;
 
-    const cellSize = Math.max(2, SIGNATURE_CONFIG.cellSize);
+    const isMobile = width < 768;
+    const cellSize = isMobile ? 2.0 : Math.max(2, SIGNATURE_CONFIG.cellSize);
     const cols = Math.ceil(width / cellSize);
     const rows = Math.ceil(height / cellSize);
 
@@ -96,18 +97,28 @@ export function ChosoAsciiCanvas({
     const canvasAspect = width / height;
 
     sampleCtx.clearRect(0, 0, cols, rows);
+    sampleCtx.imageSmoothingEnabled = true;
+    sampleCtx.imageSmoothingQuality = 'high';
 
-    // Smart Cover: Anchored to top (close-up size) with subtle right shift for Hero aesthetics
-    let sx = 0, sy = 0, sw = img.naturalWidth, sh = img.naturalHeight;
-    if (imgAspect > canvasAspect) {
-      sw = img.naturalHeight * canvasAspect;
-      sx = (img.naturalWidth - sw) * 0.70;
-      sampleCtx.drawImage(img, sx, sy, sw, sh, 0, 0, cols, rows);
+    if (isMobile) {
+      // Zoomed-in upper body framing on mobile for enhanced facial and hair definition
+      const zoomFactor = 1.32;
+      const cropW = img.naturalWidth / zoomFactor;
+      const cropH = img.naturalHeight / zoomFactor;
+      const cropX = (img.naturalWidth - cropW) * 0.50; // Perfect horizontal centering
+      const cropY = 0; // Anchored at top to preserve full hair and head volume
+      const drawW = cols;
+      const drawH = Math.round(cols * (cropH / cropW));
+      const topOffset = Math.round(rows * 0.008);
+      sampleCtx.drawImage(img, cropX, cropY, cropW, cropH, 0, topOffset, drawW, drawH);
+    } else if (imgAspect > canvasAspect) {
+      const sw = img.naturalHeight * canvasAspect;
+      const sx = (img.naturalWidth - sw) * 0.90;
+      sampleCtx.drawImage(img, sx, 0, sw, img.naturalHeight, 0, 0, cols, rows);
     } else {
-      sh = img.naturalWidth / canvasAspect;
-      sy = 0;
-      const dx = canvasAspect > 1.15 ? Math.round(cols * 0.08) : 0;
-      sampleCtx.drawImage(img, sx, sy, sw, sh, dx, 0, cols, rows);
+      const sh = img.naturalWidth / canvasAspect;
+      const dx = canvasAspect > 1.15 ? Math.round(cols * 0.22) : 0;
+      sampleCtx.drawImage(img, 0, 0, img.naturalWidth, sh, dx, 0, cols, rows);
     }
 
     const imgData = sampleCtx.getImageData(0, 0, cols, rows);
@@ -118,9 +129,9 @@ export function ChosoAsciiCanvas({
     const alphaArray = new Float32Array(totalCells);
     const edgeArray = new Float32Array(totalCells);
 
-    const brightnessShift = (SIGNATURE_CONFIG.brightness / 100) * 255;
-    const contrastFactor = 1 + (SIGNATURE_CONFIG.contrast / 100) * 1.5;
-    const gammaVal = Math.max(0.2, SIGNATURE_CONFIG.gamma);
+    const brightnessShift = ((isMobile ? 3 : SIGNATURE_CONFIG.brightness) / 100) * 255;
+    const contrastFactor = 1 + ((isMobile ? 45 : SIGNATURE_CONFIG.contrast) / 100) * 1.5;
+    const gammaVal = isMobile ? 1.5 : Math.max(0.2, SIGNATURE_CONFIG.gamma);
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
@@ -142,8 +153,8 @@ export function ChosoAsciiCanvas({
       }
     }
 
-    // Sobel Edge Filter
-    const edgeScale = SIGNATURE_CONFIG.edgeEmphasis / 100;
+    // Standard Sobel Edge Filter
+    const edgeScale = (isMobile ? 18 : SIGNATURE_CONFIG.edgeEmphasis) / 100;
     for (let r = 1; r < rows - 1; r++) {
       for (let c = 1; c < cols - 1; c++) {
         const i = r * cols + c;
@@ -167,9 +178,9 @@ export function ChosoAsciiCanvas({
     ctx.clearRect(0, 0, width, height);
     ctx.save();
 
-    const baseArm = Math.max(1, Math.round(cellSize * 0.45));
+    const baseArm = Math.max(1, Math.round(cellSize * 0.42));
     const hasChromatic = SIGNATURE_CONFIG.chromatic;
-    const fillFloor = (SIGNATURE_CONFIG.baseFill / 100);
+    const minLumThreshold = isMobile ? 0.055 : 0.075;
 
     for (let r = 0; r < rows; r++) {
       const rowOffset = r * cols;
@@ -180,16 +191,14 @@ export function ChosoAsciiCanvas({
         const A = alphaArray[i];
         if (A <= 0.05) continue;
 
-        const baseFill = fillFloor * A;
-        const computedLum = lumArray[i] + edgeArray[i] * edgeScale * 0.95;
-        const normLum = Math.min(1, Math.max(baseFill, computedLum));
+        const normLum = Math.min(1, Math.max(0, (lumArray[i] + edgeArray[i] * edgeScale * 0.9)));
 
-        if (normLum > 0.04) {
+        if (normLum > minLumThreshold) {
           const cx = c * cellSize + (cellSize >> 1);
-          const arm = Math.max(1, Math.round(baseArm * normLum));
-          const v = Math.min(255, Math.max(25, Math.round(normLum * 255)));
+          const arm = Math.max(1, Math.round(baseArm * Math.min(1, normLum * 0.95)));
+          const v = Math.min(255, Math.round(normLum * 255));
 
-          ctx.fillStyle = `rgb(${v},${v},${Math.min(255, v + 8)})`;
+          ctx.fillStyle = `rgb(${v},${v},${v})`;
 
           if (SIGNATURE_CONFIG.renderMode === 'cross') {
             // Draw Cross (+)
@@ -199,14 +208,6 @@ export function ChosoAsciiCanvas({
             // Draw Dot (■)
             const dotSize = Math.max(1, Math.round(cellSize * normLum));
             ctx.fillRect(cx - (dotSize >> 1), cy - (dotSize >> 1), dotSize, dotSize);
-          }
-
-          // Subtle RGB Chromatic Aberration
-          if (hasChromatic && normLum > 0.35) {
-            ctx.fillStyle = 'rgba(255,0,50,0.5)';
-            ctx.fillRect(cx - arm - 1, cy, 1, 1);
-            ctx.fillStyle = 'rgba(0,240,255,0.5)';
-            ctx.fillRect(cx + arm + 1, cy, 1, 1);
           }
         }
       }

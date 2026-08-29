@@ -19,24 +19,26 @@ export function CartDrawer() {
 
   if (!isCartOpen) return null;
 
-  const subtotalUSD = cart.reduce((acc, item) => acc + item.priceUSD * item.quantity, 0);
+  const subtotal = cart.reduce((acc, item) => acc + (item.price || item.priceUSD || 0) * item.quantity, 0);
 
   const handleWhatsAppCheckout = () => {
     if (cart.length === 0) return;
 
-    let message = `*SOLICITUD DE PEDIDO // RAYN MAISON*\n`;
+    let message = `*SOLICITUD DE PEDIDO // RAYN*\n`;
+    message += `📍 _Tu estilo, en un solo lugar — Paraguay_\n`;
     message += `──────────────────────\n`;
     cart.forEach((item, idx) => {
-      message += `${idx + 1}. *${item.name}*\n   - Opción/Talla: ${item.selectedOption}\n   - Cantidad: ${item.quantity}\n   - Subtotal: ${formatPrice(item.priceUSD * item.quantity)}\n\n`;
+      const itemPrice = item.price || item.priceUSD || 0;
+      message += `${idx + 1}. *${item.name}*\n   - Opción/Talla: ${item.selectedOption}\n   - Cantidad: ${item.quantity}\n   - Subtotal: ${formatPrice(itemPrice * item.quantity)}\n\n`;
     });
     message += `──────────────────────\n`;
-    message += `*TOTAL ESTIMADO:* ${formatPrice(subtotalUSD)}\n`;
-    message += `*MONEDA:* ${currency}\n`;
-    message += `\n_Deseo confirmar la orden y coordinar el envío de mi selección RAYN._`;
+    message += `*TOTAL:* ${formatPrice(subtotal)}\n`;
+    message += `*DESTINO / CIUDAD (PARAGUAY):* [Indicar ciudad]\n`;
+    message += `\n_Hola! Deseo confirmar la orden y coordinar el envío de mi selección RAYN._`;
 
     const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/?text=${encoded}`, '_blank');
-    addToast('Redirigiendo a Concierge WhatsApp', 'Tu orden ha sido estructurada con éxito', 'success');
+    window.open(`https://wa.me/595986454492?text=${encoded}`, '_blank');
+    addToast('Redirigiendo a WhatsApp (+595 986 454492)', 'Tu pedido ha sido estructurado con éxito', 'success');
   };
 
   return (
@@ -146,7 +148,7 @@ export function CartDrawer() {
 
                       {/* Price */}
                       <span className="text-xs font-bold font-mono text-white">
-                        {formatPrice(item.priceUSD * item.quantity)}
+                        {formatPrice((item.price || item.priceUSD || 0) * item.quantity)}
                       </span>
                     </div>
                   </div>
@@ -162,7 +164,7 @@ export function CartDrawer() {
               <div className="space-y-1.5 text-xs font-mono">
                 <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-white/10">
                   <span>TOTAL:</span>
-                  <span className="text-base font-mono">{formatPrice(subtotalUSD)}</span>
+                  <span className="text-base font-mono">{formatPrice(subtotal)}</span>
                 </div>
               </div>
 

@@ -25,8 +25,8 @@ export function UniverseShowcase() {
 
       return categoryMatch && searchMatch;
     }).sort((a, b) => {
-      if (sortBy === 'price-asc') return a.priceUSD - b.priceUSD;
-      if (sortBy === 'price-desc') return b.priceUSD - a.priceUSD;
+      if (sortBy === 'price-asc') return (a.price || a.priceUSD || 0) - (b.price || b.priceUSD || 0);
+      if (sortBy === 'price-desc') return (b.price || b.priceUSD || 0) - (a.price || a.priceUSD || 0);
       return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
     });
   }, [selectedCategory, searchQuery, sortBy]);
@@ -44,9 +44,17 @@ export function UniverseShowcase() {
             Curaduría <span className="text-chrome">RAYN</span>
           </h2>
           <p className="text-sm sm:text-base text-[#A1A1AA] max-w-xl mt-2 font-light">
-            De sneakers arquitectónicos a extractos de perfume y prendas urbanas: cada silueta comparte la misma disciplina de diseño, materiales premium y acabados en plata líquida.
+            De ropa streetwear y sneakers auténticos a fundas para iPhone y extractos de perfume árabe y nicho. Todos los drops seleccionados para ti.
           </p>
         </div>
+
+        <a
+          href="/tienda"
+          className="px-4 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white font-mono text-xs font-bold uppercase rounded-sm flex items-center gap-2 transition-all self-start md:self-end"
+        >
+          <span>Ir a la Tienda & Filtros</span>
+          <span>→</span>
+        </a>
       </div>
 
       {/* Category Tabs */}

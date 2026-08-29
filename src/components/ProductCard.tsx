@@ -45,31 +45,19 @@ export function ProductCard({ product }: ProductCardProps) {
         {/* Gradient Overlay for subtle depth */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0E0E12] via-transparent to-black/20 opacity-80" />
 
-        {/* Top Badges & Actions */}
-        <div className="absolute top-3 inset-x-3 flex items-center justify-between pointer-events-auto">
-          {product.tag ? (
-            <span className="px-2.5 py-1 text-[9px] font-mono font-bold tracking-[0.2em] uppercase bg-black/70 backdrop-blur-md border border-white/20 text-[#E2E8F0] rounded-sm">
-              {product.tag}
-            </span>
-          ) : (
-            <span className="px-2 py-0.5 text-[9px] font-mono tracking-widest uppercase text-[#A1A1AA]">
-              {product.categoryLabel}
-            </span>
-          )}
-
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                openQuickView(product);
-              }}
-              className="p-2 rounded-full bg-black/50 text-[#A1A1AA] hover:text-white hover:bg-black/80 border border-white/10 backdrop-blur-md transition-all"
-              aria-label="Vista rápida"
-            >
-              <Eye className="w-3.5 h-3.5" />
-            </button>
-          </div>
+        {/* Top Actions */}
+        <div className="absolute top-3 right-3 flex items-center gap-1.5 pointer-events-auto">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              openQuickView(product);
+            }}
+            className="p-2 rounded-full bg-black/50 text-[#A1A1AA] hover:text-white hover:bg-black/80 border border-white/10 backdrop-blur-md transition-all"
+            aria-label="Vista rápida"
+          >
+            <Eye className="w-3.5 h-3.5" />
+          </button>
         </div>
 
         {/* Category pill on image bottom */}
@@ -95,44 +83,46 @@ export function ProductCard({ product }: ProductCardProps) {
 
           <div className="mt-3 flex items-baseline gap-2.5">
             <span className="text-lg font-bold font-mono text-white">
-              {formatPrice(product.priceUSD)}
+              {formatPrice(product.price || product.priceUSD || 0)}
             </span>
-            {product.originalPriceUSD && (
+            {(product.originalPrice || product.originalPriceUSD) && (
               <span className="text-xs font-mono text-[#71717A] line-through">
-                {formatPrice(product.originalPriceUSD)}
+                {formatPrice(product.originalPrice || product.originalPriceUSD || 0)}
               </span>
             )}
           </div>
         </div>
 
-        {/* Options & Quick Add */}
+        {/* Options & Quick Add - ONLY FOR FASHION (ROPA) AND SNEAKERS */}
         <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
           {/* Quick Option Selector */}
-          <div className="flex items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
-            <span className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">
-              {product.optionsLabel}:
-            </span>
-            <div className="flex flex-wrap gap-1">
-              {product.options.slice(0, 3).map((opt) => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => setSelectedOption(opt)}
-                  className={`px-2 py-0.5 text-[10px] font-mono rounded-sm transition-all ${selectedOption === opt
-                    ? 'bg-white text-black font-bold'
-                    : 'bg-white/5 text-[#A1A1AA] hover:text-white border border-white/10'
-                    }`}
-                >
-                  {opt.split(' ')[0]}
-                </button>
-              ))}
-              {product.options.length > 3 && (
-                <span className="text-[10px] font-mono text-[#71717A] self-center">
-                  +{product.options.length - 3}
-                </span>
-              )}
+          {(product.category === 'fashion' || product.category === 'sneakers') && product.options?.length > 0 && (
+            <div className="flex items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
+              <span className="text-[10px] font-mono text-[#71717A] uppercase tracking-wider">
+                {product.optionsLabel || 'Talla'}:
+              </span>
+              <div className="flex flex-wrap gap-1">
+                {product.options.slice(0, 3).map((opt) => (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => setSelectedOption(opt)}
+                    className={`px-2 py-0.5 text-[10px] font-mono rounded-sm transition-all ${selectedOption === opt
+                      ? 'bg-white text-black font-bold'
+                      : 'bg-white/5 text-[#A1A1AA] hover:text-white border border-white/10'
+                      }`}
+                  >
+                    {opt.split(' ')[0]}
+                  </button>
+                ))}
+                {product.options.length > 3 && (
+                  <span className="text-[10px] font-mono text-[#71717A] self-center">
+                    +{product.options.length - 3}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Action Button */}
           <button

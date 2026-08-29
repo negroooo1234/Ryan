@@ -24,23 +24,32 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: 'RAYN // Maison Urbaine & Luxury Streetwear',
+  title: 'RAYN',
   description:
-    'Elegante, urbana, moderna y premium. Fashion, Sneakers, Fragrance y Beauty dentro del mismo universo de lujo accesible.',
+    'Tu estilo, en un solo lugar. Curaduría y reventa exclusiva de ropa streetwear, sneakers, fundas para iPhone y perfumes árabes & nicho. Fundada por Nayhara Sanabria y Rodrigo Hidalgo (Presidente Franco, Paraguay). Envíos a todo el país. Instagram: @rayn_py.',
   keywords: [
     'RAYN',
-    'Streetwear de Lujo',
-    'Moda Urbana',
-    'Sneakers Arquitectura',
-    'Extrait de Parfum',
-    'Minimalismo Negro y Plata',
-    'Moda Unisex',
+    'rayn_py',
+    'RAYN Paraguay',
+    'Presidente Franco',
+    'Presidente Franco Paraguay',
+    'Streetwear Paraguay',
+    'Sneakers Paraguay',
+    'Perfumes Arabes Paraguay',
+    'Fundas iPhone Paraguay',
+    'Nayhara Sanabria',
+    'Rodrigo Hidalgo',
+    'Envíos a todo el Paraguay',
   ],
-  authors: [{ name: 'RAYN Design Studio' }],
+  authors: [
+    { name: 'RAYN (@rayn_py)', url: 'https://www.instagram.com/rayn_py/' },
+    { name: 'Nayhara Sanabria (@nayysanabria)', url: 'https://www.instagram.com/nayysanabria/' },
+    { name: 'Rodrigo Hidalgo (@rodrigo_hidalgo06)', url: 'https://www.instagram.com/rodrigo_hidalgo06/' },
+  ],
   openGraph: {
-    title: 'RAYN // Elegante, Urbana & Sofisticada',
+    title: 'RAYN // Fashion • Beauty • Sneakers — Tu estilo, en un solo lugar',
     description:
-      'Lujo accesible + moda urbana + minimalismo con carácter. Descubre la colección oficial.',
+      'Paraguay, envíos a todo el país 📦📤. Instagram Oficial: @rayn_py. CEOs: @nayysanabria & @rodrigo_hidalgo06.',
     type: 'website',
     images: ['/images/campaign.jpg'],
   },

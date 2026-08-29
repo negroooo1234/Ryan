@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useStore } from '@/store/useStore';
-import { ShoppingBag, Search, X, Menu, ArrowRight } from 'lucide-react';
+import { ShoppingBag, Search, X, Menu, ArrowRight, MessageCircle } from 'lucide-react';
 
 export function Navbar() {
   const {
@@ -36,67 +36,17 @@ export function Navbar() {
       <header
         className={`sticky top-0 z-40 transition-all duration-300 ${isScrolled
           ? 'glass-header py-3.5 shadow-2xl shadow-black/60'
-          : 'bg-[#070708]/90 backdrop-blur-md py-5 border-b border-white/5'
+          : 'bg-[#070708]/90 backdrop-blur-md py-4 border-b border-white/5'
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Left: Navigation Categories */}
-          <nav className="hidden lg:flex items-center gap-7">
+          <nav className="hidden lg:flex items-center gap-6">
             <Link
-              href="#coleccion"
-              onClick={() => setSelectedCategory('all')}
-              className={`text-xs font-semibold tracking-[0.16em] uppercase transition-colors ${selectedCategory === 'all'
-                ? 'text-white border-b border-white pb-0.5'
-                : 'text-[#A1A1AA] hover:text-white'
-                }`}
+              href="/tienda"
+              className="text-xs font-semibold tracking-[0.16em] uppercase text-white bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-sm transition-all border border-white/15 hover:border-white/30"
             >
-              Colección
-            </Link>
-            <Link
-              href="#coleccion"
-              onClick={() => setSelectedCategory('fashion')}
-              className={`text-xs font-semibold tracking-[0.16em] uppercase transition-colors ${selectedCategory === 'fashion'
-                ? 'text-white border-b border-white pb-0.5'
-                : 'text-[#A1A1AA] hover:text-white'
-                }`}
-            >
-              Fashion
-            </Link>
-            <Link
-              href="#coleccion"
-              onClick={() => setSelectedCategory('sneakers')}
-              className={`text-xs font-semibold tracking-[0.16em] uppercase transition-colors ${selectedCategory === 'sneakers'
-                ? 'text-white border-b border-white pb-0.5'
-                : 'text-[#A1A1AA] hover:text-white'
-                }`}
-            >
-              Sneakers
-            </Link>
-            <Link
-              href="#coleccion"
-              onClick={() => setSelectedCategory('fragrance')}
-              className={`text-xs font-semibold tracking-[0.16em] uppercase transition-colors ${selectedCategory === 'fragrance'
-                ? 'text-white border-b border-white pb-0.5'
-                : 'text-[#A1A1AA] hover:text-white'
-                }`}
-            >
-              Fragrance
-            </Link>
-            <Link
-              href="#coleccion"
-              onClick={() => setSelectedCategory('beauty')}
-              className={`text-xs font-semibold tracking-[0.16em] uppercase transition-colors ${selectedCategory === 'beauty'
-                ? 'text-white border-b border-white pb-0.5'
-                : 'text-[#A1A1AA] hover:text-white'
-                }`}
-            >
-              Beauty
-            </Link>
-            <Link
-              href="#universo"
-              className="text-xs font-semibold tracking-[0.16em] uppercase text-[#A1A1AA] hover:text-white transition-colors"
-            >
-              Universo RN
+              ✦ Tienda
             </Link>
           </nav>
 
@@ -118,14 +68,40 @@ export function Navbar() {
               <span className="text-xl sm:text-2xl font-black tracking-[0.25em] text-white select-none leading-none">
                 RAYN
               </span>
-              <span className="text-[8px] font-mono tracking-[0.32em] text-[#71717A] uppercase leading-none mt-1">
-                Maison Urbaine
+              <span className="text-[8px] font-mono tracking-[0.28em] text-[#71717A] uppercase leading-none mt-1">
+                PARAGUAY
               </span>
             </div>
           </Link>
 
-          {/* Right: Actions (Search, Wishlist, Bag) */}
+          {/* Right: Actions (Instagram, Search, Bag) */}
           <div className="flex items-center gap-3 sm:gap-5">
+            {/* Instagram Official Link */}
+            <a
+              href="https://www.instagram.com/rayn_py/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#A1A1AA] hover:text-white p-2 transition-colors focus:outline-none hidden sm:flex items-center"
+              aria-label="Instagram @rayn_py"
+            >
+              <svg className="w-4 h-4 fill-none stroke-current stroke-2" viewBox="0 0 24 24">
+                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+              </svg>
+            </a>
+
+            {/* WhatsApp Official Link */}
+            <a
+              href="https://wa.me/595986454492"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#A1A1AA] hover:text-emerald-400 p-2 transition-colors focus:outline-none hidden sm:flex items-center"
+              aria-label="WhatsApp Oficial RAYN +595 986 454492"
+            >
+              <MessageCircle className="w-4 h-4" />
+            </a>
+
             {/* Search Trigger Button */}
             <button
               type="button"
@@ -202,69 +178,64 @@ export function Navbar() {
           <div className="lg:hidden bg-[#0A0A0D] border-b border-white/10 px-6 py-6 space-y-4">
             <div className="flex flex-col space-y-3 font-mono text-xs tracking-[0.18em] uppercase">
               <Link
-                href="#coleccion"
-                onClick={() => {
-                  setSelectedCategory('all');
-                  setIsMobileMenuOpen(false);
-                }}
-                className="text-white hover:text-zinc-300 py-1"
+                href="/tienda"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-white font-bold bg-white/10 px-3 py-2 rounded-sm"
               >
-                Colección Completa
+                ✦ Tienda Completa
               </Link>
               <Link
-                href="#coleccion"
-                onClick={() => {
-                  setSelectedCategory('fashion');
-                  setIsMobileMenuOpen(false);
-                }}
-                className="text-[#A1A1AA] hover:text-white py-1"
-              >
-                Fashion & Tailoring
-              </Link>
-              <Link
-                href="#coleccion"
-                onClick={() => {
-                  setSelectedCategory('sneakers');
-                  setIsMobileMenuOpen(false);
-                }}
-                className="text-[#A1A1AA] hover:text-white py-1"
-              >
-                Sneakers Arquitectura
-              </Link>
-              <Link
-                href="#coleccion"
-                onClick={() => {
-                  setSelectedCategory('fragrance');
-                  setIsMobileMenuOpen(false);
-                }}
-                className="text-[#A1A1AA] hover:text-white py-1"
-              >
-                Fragrance // Extrait
-              </Link>
-              <Link
-                href="#coleccion"
-                onClick={() => {
-                  setSelectedCategory('beauty');
-                  setIsMobileMenuOpen(false);
-                }}
-                className="text-[#A1A1AA] hover:text-white py-1"
-              >
-                Beauty & Skincare
-              </Link>
-              <Link
-                href="#universo"
+                href="/tienda?cat=fashion"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-[#A1A1AA] hover:text-white py-1"
               >
-                Manifiesto RAYN
+                Ropa
               </Link>
               <Link
-                href="#lookbook"
+                href="/tienda?cat=sneakers"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-[#A1A1AA] hover:text-white py-1"
+              >
+                Sneakers
+              </Link>
+              <Link
+                href="/tienda?cat=cases"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-[#A1A1AA] hover:text-white py-1"
+              >
+                Fundas para iPhone
+              </Link>
+              <Link
+                href="/tienda?cat=fragrance"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-[#A1A1AA] hover:text-white py-1"
+              >
+                Perfumes (Árabes & Nicho)
+              </Link>
+              <Link
+                href="/#lookbook"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-[#A1A1AA] hover:text-white py-1"
               >
                 Lookbook Urbano
               </Link>
+              <Link
+                href="/#universo"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-[#A1A1AA] hover:text-white py-1"
+              >
+                Manifiesto RAYN
+              </Link>
+              <a
+                href="https://wa.me/595986454492"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-emerald-400 font-bold hover:text-emerald-300 py-1 flex items-center gap-2"
+              >
+                <MessageCircle className="w-4 h-4" />
+                <span>WhatsApp (+595 986 454492)</span>
+              </a>
             </div>
           </div>
         )}

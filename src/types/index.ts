@@ -1,14 +1,16 @@
-export type CategoryId = 'all' | 'fashion' | 'sneakers' | 'fragrance' | 'beauty';
+export type CategoryId = 'all' | 'fashion' | 'sneakers' | 'cases' | 'fragrance' | 'beauty';
 
-export type CurrencyCode = 'USD' | 'EUR' | 'COP' | 'MXN';
+export type CurrencyCode = 'PYG';
 
 export interface Product {
   id: string;
   name: string;
   subtitle: string;
-  category: 'fashion' | 'sneakers' | 'fragrance' | 'beauty';
+  category: 'fashion' | 'sneakers' | 'cases' | 'fragrance' | 'beauty';
   categoryLabel: string;
-  priceUSD: number;
+  price: number; // Precio en Guaraníes (PYG ₲)
+  originalPrice?: number;
+  priceUSD?: number; // legacy alias
   originalPriceUSD?: number;
   tag?: string; // 'DROP 01' | 'LIMITED EDITION' | 'SIGNATURE' | 'ICONIC'
   isNew?: boolean;
@@ -31,7 +33,8 @@ export interface CartItem {
   productId: string;
   name: string;
   category: string;
-  priceUSD: number;
+  price: number; // Precio en Guaraníes
+  priceUSD?: number; // legacy alias
   image: string;
   selectedOption: string;
   quantity: number;

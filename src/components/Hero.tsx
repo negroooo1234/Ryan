@@ -7,17 +7,23 @@ import { ChosoAsciiCanvas } from './ChosoAsciiCanvas';
 
 export function Hero() {
   return (
-    <section className="relative min-h-[92vh] flex flex-col justify-center overflow-hidden border-b border-white/10 bg-ink">
+    <section className="relative min-h-[92vh] flex flex-col justify-end lg:justify-center overflow-hidden border-b border-white/10 bg-ink">
       {/* Dynamic Background: CHOSO ASCII / Dither Canvas */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <ChosoAsciiCanvas
           imageSrc="/ascii-background.png"
           className="w-full h-full"
         />
-        {/* Layered cinematic vignette and dark gradient masks */}
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/92 via-ink/55 to-transparent pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/45 pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(7,7,8,0.75)_100%)] pointer-events-none" />
+        {/* Desktop Gradient: protects left text while leaving right visual 100% clear */}
+        <div className="hidden lg:block absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/60 via-45% to-transparent pointer-events-none" />
+        
+        {/* Mobile Gradient: clear top to reveal models & hair, rich bottom for text contrast */}
+        <div className="lg:hidden absolute inset-0 bg-gradient-to-t from-ink via-ink/85 via-42% to-transparent pointer-events-none" />
+        <div className="lg:hidden absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-ink/20 to-transparent pointer-events-none" />
+
+        {/* Cinematic Vignettes */}
+        <div className="hidden lg:block absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(7,7,8,0.75)_100%)] pointer-events-none" />
+        <div className="lg:hidden absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_75%,rgba(7,7,8,0.2)_100%)] pointer-events-none" />
       </div>
 
       {/* Ambient lighting */}
@@ -26,33 +32,30 @@ export function Hero() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.04),transparent_70%)]" />
       </div>
 
-      {/* Columna vertical de margen — solo desktop */}
-      <div className="hidden xl:flex absolute left-5 top-0 bottom-0 z-10 flex-col items-center justify-center gap-6 pointer-events-none">
-        <span className="w-px flex-1 bg-gradient-to-b from-transparent via-white/12 to-transparent" />
-        <span className="mark-reg" aria-hidden="true" />
-        <span className="w-px flex-1 bg-gradient-to-b from-transparent via-white/12 to-transparent" />
-      </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8 sm:pb-12 lg:py-12 flex-1 flex flex-col justify-end lg:justify-center w-full">
+        {/* Editorial composition: anchored to bottom on mobile, centered on desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-end lg:items-center">
+          <div className="lg:col-span-7 space-y-4 sm:space-y-6">
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 flex flex-col justify-center w-full">
-        {/* Centro: composición editorial asimétrica */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          <div className="lg:col-span-7 space-y-6">
             {/* Titular RAYN */}
-            <h1 className="lg:-ml-[0.5rem] text-6xl sm:text-8xl md:text-9xl lg:text-[8.5rem] font-black uppercase tracking-[-0.04em] leading-[0.85] text-white select-none flex items-baseline">
-              <span className="text-chrome">RA</span>
+            <h1 className="lg:-ml-[0.5rem] text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] font-black uppercase tracking-[-0.04em] leading-[0.88] text-white select-none flex items-baseline">
+              <span className="text-chrome">RA  </span>
               <span className="text-white">YN</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-silver font-light leading-relaxed max-w-xl text-pretty">
-              Una estética premium, minimalista y con carácter. Piezas urbanas,
-              fragancias de autor, sneakers de arquitectura y belleza unisex dentro
-              de un mismo universo.
+            {/* Sub-headline: Fashion • Beauty • Sneakers */}
+            <div className="text-xs sm:text-sm font-mono tracking-[0.2em] text-[#94A3B8] uppercase">
+              <span className="text-white font-bold">Tu estilo, en un solo lugar</span>
+            </div>
+
+            <p className="text-sm sm:text-base lg:text-lg text-silver font-light leading-relaxed max-w-xl text-pretty">
+              Reventa y curaduría exclusiva de ropa streetwear, sneakers de colección, fundas para iPhone, perfumes árabes y de nicho. Envíos asegurados a todo el territorio paraguayo 🇵🇾.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
               <Link
                 href="#coleccion"
-                className="btn-rayn-primary px-7 py-4 min-h-12 flex items-center gap-3"
+                className="btn-rayn-primary px-7 py-3.5 sm:py-4 min-h-11 sm:min-h-12 flex items-center justify-center gap-3"
               >
                 <span>Explorar Selección</span>
                 <ArrowRight className="w-4 h-4" />
@@ -60,7 +63,7 @@ export function Hero() {
 
               <Link
                 href="#lookbook"
-                className="btn-rayn-outline px-6 py-4 min-h-12 flex items-center gap-2.5"
+                className="btn-rayn-outline px-6 py-3.5 sm:py-4 min-h-11 sm:min-h-12 flex items-center justify-center gap-2.5"
               >
                 <span>Ver Lookbook Urbano</span>
                 <ArrowDownRight className="w-4 h-4" />

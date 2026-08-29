@@ -27,7 +27,7 @@ export function VIPAccessSection() {
     const text = encodeURIComponent(
       'Hola RAYN Studio, deseo unirme al Club VIP y recibir invitaciones privadas para los próximos Drops.'
     );
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    window.open(`https://wa.me/595986454492?text=${text}`, '_blank');
   };
 
   return (

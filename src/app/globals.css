@@ -199,13 +199,11 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background-image: repeating-linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.03) 0px,
-    rgba(255, 255, 255, 0.03) 1px,
-    transparent 1px,
-    transparent 3px
-  );
+  background-image: repeating-linear-gradient(180deg,
+      rgba(255, 255, 255, 0.03) 0px,
+      rgba(255, 255, 255, 0.03) 1px,
+      transparent 1px,
+      transparent 3px);
 }
 
 /* Cemento — superficie de card, casi imperceptible */
@@ -223,13 +221,11 @@
 .rule-oxide {
   height: 1px;
   border: 0;
-  background: linear-gradient(
-    90deg,
-    var(--color-oxide) 0,
-    var(--color-oxide) 56px,
-    var(--line) 56px,
-    var(--line) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--color-oxide) 0,
+      var(--color-oxide) 56px,
+      var(--line) 56px,
+      var(--line) 100%);
 }
 
 /* Marca de registro tipo imprenta */
@@ -310,7 +306,7 @@
   border: 1px solid #FFFFFF;
   overflow: hidden;
   transition: color 260ms cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 260ms cubic-bezier(0.16, 1, 0.3, 1);
+    border-color 260ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-rayn-primary::before {
@@ -347,7 +343,7 @@
   font-size: 0.78rem;
   overflow: hidden;
   transition: color 260ms cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 260ms cubic-bezier(0.16, 1, 0.3, 1);
+    border-color 260ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-rayn-outline::before {
@@ -519,6 +515,7 @@
    ============================================================= */
 
 @media (prefers-reduced-motion: reduce) {
+
   .animate-marquee,
   .shimmer-badge,
   .animate-fadeIn,
@@ -541,10 +538,13 @@
    ============================================================= */
 
 @keyframes chosoPulse {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.85;
     transform: scale(1) translateZ(0);
   }
+
   50% {
     opacity: 1;
     transform: scale(1.012) translateZ(0);
@@ -555,4 +555,3 @@
   animation: chosoPulse 3.5s ease-in-out infinite;
   will-change: opacity, transform;
 }
-

@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { CartItem, CategoryId, CurrencyCode, Product, ToastMessage } from '@/types';
-import { CURRENCY_RATES } from '@/data/products';
+import { CURRENCY, PRODUCTS } from '@/data/products';
 
 interface StoreState {
   // Cart
@@ -75,7 +75,8 @@ export const useStore = create<StoreState>()(
               productId: product.id,
               name: product.name,
               category: product.categoryLabel,
-              priceUSD: product.priceUSD,
+              price: product.price || product.priceUSD || 0,
+              priceUSD: product.price || product.priceUSD || 0,
               image: product.image,
               selectedOption: option,
               quantity,
@@ -116,24 +117,12 @@ export const useStore = create<StoreState>()(
       closeCart: () => set({ isCartOpen: false }),
       toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
 
-      // Currency
-      currency: 'USD',
+      // Currency & Price Formatting (Guaraníes PYG ₲)
+      currency: 'PYG',
       setCurrency: (currency) => set({ currency }),
-      formatPrice: (amountUSD: number) => {
-        const currentCurr = get().currency;
-        const info = CURRENCY_RATES[currentCurr] || CURRENCY_RATES.USD;
-        const converted = Math.round(amountUSD * info.rate);
-
-        if (currentCurr === 'COP') {
-          return `$${converted.toLocaleString('es-CO')} COP`;
-        }
-        if (currentCurr === 'MXN') {
-          return `$${converted.toLocaleString('es-MX')} MXN`;
-        }
-        if (currentCurr === 'EUR') {
-          return `${converted} €`;
-        }
-        return `$${converted} USD`;
+      formatPrice: (amount: number) => {
+        const val = Math.round(amount || 0);
+        return `₲ ${val.toLocaleString('es-PY')}`;
       },
 
       // Quick View
@@ -186,6 +175,20 @@ export const useStore = create<StoreState>()(
         wishlist: state.wishlist,
         currency: state.currency,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state && state.cart) {
+          state.currency = 'PYG';
+          state.cart = state.cart.map((item) => {
+            const prod = PRODUCTS.find((p) => p.id === item.productId);
+            const correctPrice = prod ? (prod.price || prod.priceUSD || item.price) : item.price;
+            return {
+              ...item,
+              price: correctPrice,
+              priceUSD: correctPrice,
+            };
+          });
+        }
+      },
     }
   )
 );

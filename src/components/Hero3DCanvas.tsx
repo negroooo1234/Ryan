@@ -3,7 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
-export function Hero3DCanvas() {
+interface Hero3DCanvasProps {
+  className?: string;
+}
+
+export function Hero3DCanvas({ className = '' }: Hero3DCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -16,9 +20,9 @@ export function Hero3DCanvas() {
     try {
       renderer = new THREE.WebGLRenderer({
         alpha: true,
-        antialias: false, // Disabling heavy antialiasing saves 60% GPU fillrate
+        antialias: true, // Crisp anti-aliasing for smooth ring edges and geometries
         powerPreference: 'high-performance',
-        precision: 'mediump',
+        precision: 'highp',
         stencil: false,
         depth: true,
       });
@@ -30,11 +34,12 @@ export function Hero3DCanvas() {
     const width = container.clientWidth || 500;
     const height = container.clientHeight || 500;
 
-    // Optimized 1.0 - 1.25 pixel ratio for buttery 60 FPS
+    // Retina & High-DPI support (clamped to 2 for crisp native rendering without GPU overload)
     renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.25;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(renderer.domElement);
 
     // Scene & Camera
@@ -42,122 +47,136 @@ export function Hero3DCanvas() {
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 50);
     camera.position.set(0, 0, 9.8);
 
-    // Optimized Lighting (Directional + Ambient only)
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    // Optimized Studio Lighting for Luxury Silver Reflections
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.3);
     scene.add(ambientLight);
 
-    const cursorLight = new THREE.PointLight(0xffffff, 4.0, 15);
+    const frontKeyLight = new THREE.DirectionalLight(0xffffff, 3.5);
+    frontKeyLight.position.set(0, 2, 6);
+    scene.add(frontKeyLight);
+
+    const cursorLight = new THREE.PointLight(0xffffff, 4.5, 18);
     cursorLight.position.set(2, 2, 5);
     scene.add(cursorLight);
 
-    const rimLight = new THREE.DirectionalLight(0xe2e8f0, 3.5);
+    const rimLight = new THREE.DirectionalLight(0xe2e8f0, 4.0);
     rimLight.position.set(-4, 4, 4);
     scene.add(rimLight);
+
+    const fillLight = new THREE.DirectionalLight(0x94a3b8, 2.5);
+    fillLight.position.set(4, -3, 3);
+    scene.add(fillLight);
 
     const emblemGroup = new THREE.Group();
     scene.add(emblemGroup);
 
-    // Fast procedurally generated gradient reflection map
-    const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(128);
+    // High quality procedurally generated reflection map
+    const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256);
     const cubeCamera = new THREE.CubeCamera(0.1, 10, cubeRenderTarget);
     const envScene = new THREE.Scene();
-    const envL1 = new THREE.DirectionalLight(0xffffff, 3);
-    envL1.position.set(1, 1, 1);
+    const envL1 = new THREE.DirectionalLight(0xffffff, 4.0);
+    envL1.position.set(1, 2, 2);
     envScene.add(envL1);
-    const envL2 = new THREE.DirectionalLight(0x94a3b8, 2);
-    envL2.position.set(-1, -1, -1);
+    const envL2 = new THREE.DirectionalLight(0xcfd8dc, 3.0);
+    envL2.position.set(-2, -1, -1);
     envScene.add(envL2);
+    const envL3 = new THREE.DirectionalLight(0x94a3b8, 2.0);
+    envL3.position.set(0, -2, 2);
+    envScene.add(envL3);
     cubeCamera.update(renderer, envScene);
     scene.environment = cubeRenderTarget.texture;
 
-    const LOGO_SRC = '/_next/image?url=%2FRAYN.PNG&w=640&q=75';
-    const LOGO_FALLBACK = '/RAYN.PNG';
+    const LOGO_SRC = '/RAYN.PNG';
+    let gyroRingMesh: THREE.Mesh | null = null;
 
     const textureLoader = new THREE.TextureLoader();
     textureLoader.load(
       LOGO_SRC,
       (logoTexture) => {
         logoTexture.colorSpace = THREE.SRGBColorSpace;
-        logoTexture.minFilter = THREE.LinearFilter;
+        logoTexture.generateMipmaps = true;
+        logoTexture.minFilter = THREE.LinearMipmapLinearFilter;
+        logoTexture.magFilter = THREE.LinearFilter;
+        const maxAniso = renderer.capabilities.getMaxAnisotropy();
+        logoTexture.anisotropy = Math.min(maxAniso, 16);
+        logoTexture.needsUpdate = true;
 
-        // Front Logo Disc (32 segments for ultra-fast GPU throughput)
-        const logoGeo = new THREE.CircleGeometry(2.25, 36);
+        // Front Logo Disc with ultra-smooth 128 radial segments (no visible polygon facets)
+        const logoGeo = new THREE.CircleGeometry(2.26, 128);
         const logoMat = new THREE.MeshStandardMaterial({
           map: logoTexture,
           color: 0xffffff,
           metalness: 0.95,
-          roughness: 0.14,
-          envMapIntensity: 2.5,
+          roughness: 0.12,
+          envMapIntensity: 2.8,
           side: THREE.FrontSide,
         });
         const logoMesh = new THREE.Mesh(logoGeo, logoMat);
-        logoMesh.position.z = 0.09;
+        logoMesh.position.z = 0.082;
         emblemGroup.add(logoMesh);
 
-        // Medallion Chassis
-        const chassisGeo = new THREE.CylinderGeometry(2.32, 2.32, 0.16, 36);
+        // Medallion Chassis (High-poly cylinder with 128 radial segments)
+        const chassisGeo = new THREE.CylinderGeometry(2.32, 2.32, 0.16, 128);
         const chassisMat = new THREE.MeshStandardMaterial({
-          color: 0x18181b,
+          color: 0x141417,
           metalness: 0.95,
-          roughness: 0.2,
-          envMapIntensity: 1.8,
+          roughness: 0.18,
+          envMapIntensity: 2.0,
         });
         const chassisMesh = new THREE.Mesh(chassisGeo, chassisMat);
         chassisMesh.rotation.x = Math.PI / 2;
         emblemGroup.add(chassisMesh);
 
-        // Torus Rings (48 tubular segments for peak performance)
+        // Polished Bezel Chamfer Rim (eliminates any sharp mesh joint artifacts)
+        const bezelGeo = new THREE.TorusGeometry(2.32, 0.02, 24, 160);
+        const bezelMat = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          metalness: 1.0,
+          roughness: 0.06,
+          envMapIntensity: 3.5,
+        });
+        const bezelMesh = new THREE.Mesh(bezelGeo, bezelMat);
+        bezelMesh.position.z = 0.08;
+        emblemGroup.add(bezelMesh);
+
+        // Torus Rings (160 tubular segments & 24 radial segments for razor-sharp curves)
         const ringMat = new THREE.MeshStandardMaterial({
           color: 0xffffff,
           metalness: 1.0,
-          roughness: 0.08,
-          envMapIntensity: 3.0,
+          roughness: 0.06,
+          envMapIntensity: 3.2,
         });
 
-        const outerRingGeo = new THREE.TorusGeometry(2.55, 0.035, 8, 48);
+        const outerRingGeo = new THREE.TorusGeometry(2.55, 0.032, 24, 160);
         const outerRing = new THREE.Mesh(outerRingGeo, ringMat);
         emblemGroup.add(outerRing);
 
-        const innerRingGeo = new THREE.TorusGeometry(2.36, 0.02, 8, 48);
+        const innerRingGeo = new THREE.TorusGeometry(2.36, 0.018, 24, 160);
         const innerRing = new THREE.Mesh(innerRingGeo, ringMat);
         emblemGroup.add(innerRing);
 
-        const gyroGeo = new THREE.TorusGeometry(2.9, 0.02, 8, 54);
+        const gyroGeo = new THREE.TorusGeometry(2.9, 0.022, 24, 160);
         const gyroMat = new THREE.MeshStandardMaterial({
           color: 0xd4d4d8,
           metalness: 0.98,
-          roughness: 0.14,
+          roughness: 0.12,
           transparent: true,
-          opacity: 0.85,
+          opacity: 0.88,
         });
         const gyroRing = new THREE.Mesh(gyroGeo, gyroMat);
         gyroRing.rotation.x = Math.PI / 3.5;
+        gyroRingMesh = gyroRing;
         emblemGroup.add(gyroRing);
 
         setIsLoaded(true);
       },
       undefined,
-      () => {
-        textureLoader.load(LOGO_FALLBACK, (tex) => {
-          tex.colorSpace = THREE.SRGBColorSpace;
-          const geo = new THREE.CircleGeometry(2.25, 36);
-          const mat = new THREE.MeshStandardMaterial({
-            map: tex,
-            color: 0xffffff,
-            metalness: 0.95,
-            roughness: 0.14,
-            envMapIntensity: 2.5,
-            side: THREE.FrontSide,
-          });
-          const mesh = new THREE.Mesh(geo, mat);
-          mesh.position.z = 0.09;
-          emblemGroup.add(mesh);
-          setIsLoaded(true);
-        });
+      (err) => {
+        console.error('Error loading 3D logo texture', err);
       }
     );
 
-    // Floating Particles (reduced count for zero draw call overhead)
+    // Floating Particles (smooth ambient dust)
     const particlesCount = 40;
     const particlePositions = new Float32Array(particlesCount * 3);
     for (let i = 0; i < particlesCount * 3; i += 3) {
@@ -260,8 +279,8 @@ export function Hero3DCanvas() {
 
       particles.rotation.y = elapsed * 0.02;
 
-      if (emblemGroup.children[3]) {
-        emblemGroup.children[3].rotation.z = elapsed * 0.18;
+      if (gyroRingMesh) {
+        gyroRingMesh.rotation.z = elapsed * 0.18;
       }
 
       renderer.render(scene, camera);
@@ -300,7 +319,7 @@ export function Hero3DCanvas() {
 
   return (
     <div
-      className="relative w-full h-[380px] sm:h-[480px] lg:h-[580px] flex items-center justify-center select-none"
+      className={`relative w-full ${className || 'h-[380px] sm:h-[480px] lg:h-[580px]'} flex items-center justify-center select-none`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

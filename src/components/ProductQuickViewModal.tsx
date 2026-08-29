@@ -46,7 +46,7 @@ export function ProductQuickViewModal() {
     const text = encodeURIComponent(
       `Hola RAYN Concierge, deseo consultar disponibilidad y detalles de la pieza: ${quickViewProduct.name} (${selectedOption}).`
     );
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    window.open(`https://wa.me/595986454492?text=${text}`, '_blank');
   };
 
   return (
@@ -80,14 +80,6 @@ export function ProductQuickViewModal() {
             className="object-cover object-center"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0E0E12]/80 via-transparent to-transparent md:hidden" />
-
-          {quickViewProduct.tag && (
-            <div className="absolute top-4 left-4 z-10">
-              <span className="px-3 py-1 text-[10px] font-mono font-bold tracking-widest uppercase bg-black/80 backdrop-blur-md border border-white/20 text-[#E2E8F0] rounded-sm">
-                {quickViewProduct.tag}
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Right: Product Details & Purchase Form */}
@@ -108,11 +100,11 @@ export function ProductQuickViewModal() {
             {/* Price Row */}
             <div className="flex items-baseline gap-3 py-2 border-y border-white/10">
               <span className="text-2xl font-bold font-mono text-white">
-                {formatPrice(quickViewProduct.priceUSD)}
+                {formatPrice(quickViewProduct.price || quickViewProduct.priceUSD || 0)}
               </span>
-              {quickViewProduct.originalPriceUSD && (
+              {(quickViewProduct.originalPrice || quickViewProduct.originalPriceUSD) && (
                 <span className="text-sm font-mono text-[#71717A] line-through">
-                  {formatPrice(quickViewProduct.originalPriceUSD)}
+                  {formatPrice(quickViewProduct.originalPrice || quickViewProduct.originalPriceUSD || 0)}
                 </span>
               )}
               <span className="ml-auto text-[10px] font-mono text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/20">
@@ -207,7 +199,7 @@ export function ProductQuickViewModal() {
                 ) : (
                   <>
                     <ShoppingBag className="w-4 h-4" />
-                    <span>AÑADIR A LA BOLSA • {formatPrice(quickViewProduct.priceUSD * quantity)}</span>
+                    <span>AÑADIR A LA BOLSA • {formatPrice((quickViewProduct.price || quickViewProduct.priceUSD || 0) * quantity)}</span>
                   </>
                 )}
               </button>
