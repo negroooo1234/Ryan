@@ -45,7 +45,7 @@ export function Hero() {
             </div>
 
             <p className="text-sm sm:text-base lg:text-lg text-silver font-light leading-relaxed max-w-xl text-pretty">
-              Reventa y curaduría exclusiva de ropa streetwear, sneakers de colección, fundas para iPhone, perfumes árabes y de nicho. Envíos asegurados a todo el territorio paraguayo 🇵🇾.
+              Ropa, Sneakers, Fundas para iPhone, Perfumes Árabes y de Nicho. Envios asegurados a todo el territorio paraguayo 🇵🇾.
             </p>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
