@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { PRODUCTS } from '@/data/products';
 import { useStore } from '@/store/useStore';
-import { ChevronLeft, ChevronRight, Eye, ShoppingBag, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, ShoppingBag, Check, X } from 'lucide-react';
 
 interface LookData {
   id: string;
@@ -146,6 +146,7 @@ export function EditorialLookbook() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 pointer-events-none" />
 
+              {/* Hotspot Pin */}
               <div
                 style={{ top: currentLook.hotspot.top, left: currentLook.hotspot.left }}
                 className="absolute -translate-x-1/2 -translate-y-1/2 z-30"
@@ -153,59 +154,81 @@ export function EditorialLookbook() {
                 <button
                   type="button"
                   onClick={() => setIsTooltipOpen(!isTooltipOpen)}
-                  className={`relative w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 ${isTooltipOpen
+                  className={`relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 ${isTooltipOpen
                       ? 'bg-white text-black scale-110 shadow-[0_0_25px_rgba(255,255,255,0.9)]'
                       : 'bg-black/80 text-white border-2 border-white/80 hover:scale-110'
                     }`}
-                  aria-label="Ver pantalón"
+                  aria-label="Ver pieza en el fit"
                 >
-                  <span className="text-xs font-mono font-black">{isTooltipOpen ? '×' : '+'}</span>
+                  <span className="text-sm font-mono font-black">{isTooltipOpen ? '×' : '+'}</span>
                   <span className="absolute inset-0 rounded-full animate-ping opacity-30 bg-white pointer-events-none" />
                 </button>
+              </div>
 
-                {/* Floating Tooltip for the Pants */}
-                {isTooltipOpen && (
-                  <div className="absolute left-12 top-1/2 -translate-y-1/2 w-64 sm:w-72 bg-[#0E0E12]/95 backdrop-blur-xl border border-white/25 p-4 rounded-sm shadow-2xl z-40 animate-fadeIn pointer-events-auto">
-                    <div className="flex items-center justify-between pb-1.5 border-b border-white/10">
-                      <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider">
+              {/* Product Popup Card */}
+              {isTooltipOpen && (
+                <div className="absolute z-40 animate-fadeIn pointer-events-auto bottom-3 left-3 right-3 sm:bottom-auto sm:right-auto sm:w-72 sm:left-auto sm:right-4 sm:top-1/2 sm:-translate-y-1/2 lg:left-[calc(50%+24px)] lg:right-auto lg:top-[62%] bg-[#0E0E12]/95 backdrop-blur-xl border border-white/25 p-3.5 sm:p-4 rounded-sm shadow-2xl">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-white/10">
+                    <div className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      <span className="text-[10px] font-mono text-emerald-400 uppercase tracking-wider font-bold">
                         PIEZA EN EL FIT
                       </span>
+                    </div>
+                    <div className="flex items-center gap-2">
                       <span className="text-[9px] font-mono text-[#A1A1AA]">
                         {currentLook.colorName}
                       </span>
-                    </div>
-
-                    <h4 className="text-xs sm:text-sm font-bold text-white mt-2 leading-snug uppercase">
-                      {currentLook.title}
-                    </h4>
-                    <p className="text-[11px] text-[#A1A1AA] mt-0.5">
-                      Pantalón Corte Recto
-                    </p>
-                    <p className="text-sm font-mono font-bold text-white mt-1.5">
-                      {formatPrice(denimProduct.price || denimProduct.priceUSD || 750000)}
-                    </p>
-
-                    <div className="mt-3 flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => openQuickView(denimProduct)}
-                        className="flex-1 py-2 px-2.5 bg-white hover:bg-[#E2E8F0] text-black text-[10px] font-mono font-bold uppercase rounded-sm flex items-center justify-center gap-1.5 transition-colors shadow-sm"
+                        onClick={() => setIsTooltipOpen(false)}
+                        className="text-[#71717A] hover:text-white p-0.5 transition-colors"
+                        aria-label="Cerrar popup"
                       >
-                        <Eye className="w-3.5 h-3.5" />
-                        <span>Ver Detalles</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={handleAddToCart}
-                        className="py-2 px-3 bg-white/10 hover:bg-white/20 text-white text-[10px] font-mono uppercase font-bold rounded-sm border border-white/20 transition-colors flex items-center gap-1.5"
-                      >
-                        <ShoppingBag className="w-3.5 h-3.5" />
-                        <span>+ Bolsa</span>
+                        <X className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </div>
-                )}
-              </div>
+
+                  <h4 className="text-xs sm:text-sm font-bold text-white mt-2 leading-snug uppercase tracking-tight line-clamp-1 sm:line-clamp-none">
+                    {currentLook.title}
+                  </h4>
+                  <p className="text-[11px] text-[#A1A1AA] mt-0.5">
+                    Pantalón Corte Recto
+                  </p>
+                  <p className="text-sm font-mono font-bold text-white mt-1.5">
+                    {formatPrice(denimProduct.price || denimProduct.priceUSD || 750000)}
+                  </p>
+
+                  <div className="mt-3 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openQuickView(denimProduct)}
+                      className="flex-1 py-2 px-2.5 bg-white hover:bg-[#E2E8F0] active:scale-[0.98] text-black text-[10px] font-mono font-bold uppercase rounded-sm flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      <span>Ver Detalles</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleAddToCart}
+                      className="py-2 px-3 bg-white/10 hover:bg-white/20 active:scale-[0.98] text-white text-[10px] font-mono uppercase font-bold rounded-sm border border-white/20 transition-all flex items-center gap-1.5"
+                    >
+                      {isAdded ? (
+                        <>
+                          <Check className="w-3.5 h-3.5 text-emerald-400" />
+                          <span className="text-emerald-400 font-bold">Listo</span>
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingBag className="w-3.5 h-3.5" />
+                          <span>+ Bolsa</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

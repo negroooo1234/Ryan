@@ -45,7 +45,7 @@ export function Hero() {
             </div>
 
             <p className="text-sm sm:text-base lg:text-lg text-silver font-light leading-relaxed max-w-xl text-pretty">
-              Ropa, Sneakers, Fundas para iPhone, Perfumes Árabes y de Nicho. Envios asegurados a todo el territorio paraguayo 🇵🇾.
+              Ropa, Sneakers, Fundas para iPhone, Perfumes Árabes y de Nicho. Envios asegurados a todo el territorio paraguayo.
             </p>
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
@@ -55,14 +55,6 @@ export function Hero() {
               >
                 <span>Explorar Selección</span>
                 <ArrowRight className="w-4 h-4" />
-              </Link>
-
-              <Link
-                href="#lookbook"
-                className="btn-rayn-outline px-6 py-3.5 sm:py-4 min-h-11 sm:min-h-12 flex items-center justify-center gap-2.5"
-              >
-                <span>Ver Lookbook Urbano</span>
-                <ArrowDownRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
