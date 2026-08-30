@@ -7,7 +7,7 @@ const HERO_BACKGROUND = '/ascii-background.png';
 
 export function Hero() {
   return (
-    <section className="relative min-h-[92vh] flex flex-col justify-end lg:justify-center overflow-hidden border-b border-white/10 bg-ink">
+    <section className="relative min-h-[100dvh] lg:min-h-[92vh] flex flex-col justify-end lg:justify-center overflow-hidden border-b border-white/10 bg-ink">
       <link
         rel="preload"
         as="image"
@@ -32,7 +32,7 @@ export function Hero() {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(255,255,255,0.04),transparent_70%)]" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8 sm:pb-12 lg:py-12 flex-1 flex flex-col justify-end lg:justify-center w-full">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-10 sm:pb-12 lg:py-12 flex-1 flex flex-col justify-end lg:justify-center w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-end lg:items-center">
           <div className="lg:col-span-7 space-y-4 sm:space-y-6">
             <h1 className="lg:-ml-[0.5rem] text-5xl sm:text-7xl md:text-8xl lg:text-[8.5rem] font-black uppercase tracking-[-0.04em] leading-[0.88] text-white select-none flex items-baseline">

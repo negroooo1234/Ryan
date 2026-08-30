@@ -11,6 +11,8 @@ import {
   X,
   RotateCcw,
   Tag,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react';
 
 export function CatalogView() {
@@ -20,7 +22,7 @@ export function CatalogView() {
   const [selectedCategory, setSelectedCategory] = useState<CategoryId>(urlCategory || 'all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'featured' | 'price-asc' | 'price-desc' | 'newest'>('featured');
-  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(true);
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const [lastSyncedCategory, setLastSyncedCategory] = useState(urlCategory);
   if (urlCategory !== lastSyncedCategory) {
@@ -95,127 +97,152 @@ export function CatalogView() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <div className="lg:hidden flex items-center justify-between gap-4 bg-[#0E0E12] p-3 rounded-sm border border-white/10">
+        <div className="lg:col-span-3 lg:sticky lg:top-24 space-y-3">
           <button
             type="button"
             onClick={() => setIsMobileFilterOpen(!isMobileFilterOpen)}
-            className="flex items-center gap-2 text-xs font-mono font-bold text-white uppercase"
+            className="lg:hidden w-full flex items-center justify-between gap-4 bg-[#0E0E12] hover:bg-[#14141A] active:scale-[0.99] p-3.5 rounded-sm border border-white/10 hover:border-white/20 transition-all cursor-pointer group select-none shadow-sm"
+            aria-expanded={isMobileFilterOpen}
+            aria-label="Desplegar o guardar filtros"
           >
-            <SlidersHorizontal className="w-4 h-4 text-emerald-400" />
-            <span>Categorías</span>
-            {hasActiveFilters && (
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-            )}
-          </button>
-
-          <span className="text-xs font-mono text-[#A1A1AA]">
-            {filteredProducts.length} piezas
-          </span>
-        </div>
-
-        <aside
-          className={`lg:col-span-3 space-y-6 lg:sticky lg:top-24 ${isMobileFilterOpen ? 'block' : 'hidden lg:block'
-            }`}
-        >
-          <div className="p-5 bg-[#0E0E12] border border-white/10 rounded-sm space-y-3">
-            <label htmlFor="catalog-search" className="block text-xs font-bold font-mono text-white uppercase tracking-wider">
-              Buscar en Catálogo
-            </label>
-            <div className="relative">
-              <input
-                id="catalog-search"
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Jeans, sneakers, funda, oud..."
-                className="w-full bg-[#14141A] border border-white/15 focus:border-white/50 text-xs text-white placeholder-[#71717A] rounded-sm py-2.5 pl-8 pr-8 font-sans focus:outline-none transition-colors"
-              />
-              <Search className="w-3.5 h-3.5 text-[#71717A] absolute left-2.5 top-1/2 -translate-y-1/2" />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-white"
-                  aria-label="Borrar búsqueda"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
+            <div className="flex items-center gap-2.5 text-xs font-mono font-bold text-white uppercase tracking-wider">
+              <SlidersHorizontal className="w-4 h-4 text-emerald-400" />
+              <span>Filtros y Categorías</span>
+              {hasActiveFilters && (
+                <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
               )}
             </div>
-          </div>
 
-          <div className="p-5 bg-[#0E0E12] border border-white/10 rounded-sm space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold font-mono text-white uppercase tracking-wider">
-                Categoría
+            <div className="flex items-center gap-2 text-xs font-mono text-[#A1A1AA] group-hover:text-white transition-colors">
+              <span className="text-[11px] uppercase tracking-wider">
+                {isMobileFilterOpen ? 'Guardar' : 'Desplegar'}
               </span>
-              <span className="text-[10px] font-mono text-[#71717A]">
-                {selectedCategory === 'all' ? 'Todas' : selectedCategory}
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-[#CBD5E1]">
+                {filteredProducts.length}
               </span>
+              {isMobileFilterOpen ? (
+                <ChevronUp className="w-4 h-4 text-white transition-transform duration-300" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-white transition-transform duration-300" />
+              )}
             </div>
+          </button>
 
-            <div className="space-y-1 pt-1">
-              {categories.map((cat) => {
-                const isSelected = selectedCategory === cat.id;
-                const count = cat.id === 'all'
-                  ? PRODUCTS.length
-                  : PRODUCTS.filter((p) => p.category === cat.id).length;
-
-                return (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-sm text-xs font-mono transition-all text-left ${isSelected
-                        ? 'bg-white text-black font-bold shadow-sm'
-                        : 'text-[#A1A1AA] hover:text-white hover:bg-white/5'
-                      }`}
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className="text-xs">{cat.icon}</span>
-                      <span>{cat.label}</span>
-                    </span>
-                    <span
-                      className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${isSelected ? 'bg-black text-white' : 'bg-white/5 text-[#71717A]'
-                        }`}
+          <aside
+            className={`grid transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isMobileFilterOpen
+                ? 'grid-rows-[1fr] opacity-100'
+                : 'grid-rows-[0fr] opacity-0 pointer-events-none lg:grid-rows-[1fr] lg:opacity-100 lg:pointer-events-auto'
+            }`}
+          >
+            <div
+              className={`overflow-hidden lg:overflow-visible transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] space-y-6 ${
+                isMobileFilterOpen
+                  ? 'translate-y-0'
+                  : '-translate-y-2 lg:translate-y-0'
+              }`}
+            >
+              <div className="p-5 bg-[#0E0E12] border border-white/10 rounded-sm space-y-3">
+                <label htmlFor="catalog-search" className="block text-xs font-bold font-mono text-white uppercase tracking-wider">
+                  Buscar en Catálogo
+                </label>
+                <div className="relative">
+                  <input
+                    id="catalog-search"
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Jeans, sneakers, funda, oud..."
+                    className="w-full bg-[#14141A] border border-white/15 focus:border-white/50 text-xs text-white placeholder-[#71717A] rounded-sm py-2.5 pl-8 pr-8 font-sans focus:outline-none transition-colors"
+                  />
+                  <Search className="w-3.5 h-3.5 text-[#71717A] absolute left-2.5 top-1/2 -translate-y-1/2" />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#71717A] hover:text-white"
+                      aria-label="Borrar búsqueda"
                     >
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
 
-          {hasActiveFilters && (
-            <button
-              type="button"
-              onClick={handleResetFilters}
-              className="w-full py-2.5 px-4 bg-transparent hover:bg-white/5 border border-white/20 hover:border-white/40 text-xs font-mono text-[#A1A1AA] hover:text-white rounded-sm flex items-center justify-center gap-2 transition-colors"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Restablecer Filtros</span>
-            </button>
-          )}
+              <div className="p-5 bg-[#0E0E12] border border-white/10 rounded-sm space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold font-mono text-white uppercase tracking-wider">
+                    Categoría
+                  </span>
+                  <span className="text-[10px] font-mono text-[#71717A]">
+                    {selectedCategory === 'all' ? 'Todas' : selectedCategory}
+                  </span>
+                </div>
 
-          <div className="p-4 bg-[#0A0A0D] border border-emerald-500/20 rounded-sm space-y-2">
-            <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono font-bold">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Asesoría Personalizada</span>
+                <div className="space-y-1 pt-1">
+                  {categories.map((cat) => {
+                    const isSelected = selectedCategory === cat.id;
+                    const count = cat.id === 'all'
+                      ? PRODUCTS.length
+                      : PRODUCTS.filter((p) => p.category === cat.id).length;
+
+                    return (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        onClick={() => setSelectedCategory(cat.id)}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-sm text-xs font-mono transition-all text-left ${isSelected
+                            ? 'bg-white text-black font-bold shadow-sm'
+                            : 'text-[#A1A1AA] hover:text-white hover:bg-white/5'
+                          }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <span className="text-xs">{cat.icon}</span>
+                          <span>{cat.label}</span>
+                        </span>
+                        <span
+                          className={`text-[10px] px-1.5 py-0.5 rounded font-mono ${isSelected ? 'bg-black text-white' : 'bg-white/5 text-[#71717A]'
+                            }`}
+                        >
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  className="w-full py-2.5 px-4 bg-transparent hover:bg-white/5 border border-white/20 hover:border-white/40 text-xs font-mono text-[#A1A1AA] hover:text-white rounded-sm flex items-center justify-center gap-2 transition-colors"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Restablecer Filtros</span>
+                </button>
+              )}
+
+              <div className="p-4 bg-[#0A0A0D] border border-emerald-500/20 rounded-sm space-y-2">
+                <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Asesoría Personalizada</span>
+                </div>
+                <p className="text-[11px] text-[#A1A1AA] font-light leading-relaxed">
+                  ¿Buscando un modelo o fragancia específica? Consulta con nosotros directamente por WhatsApp.
+                </p>
+                <a
+                  href="https://wa.me/595986454492?text=Hola%20RAYN!%20Deseo%20consultar%20por%20un%20producto%20del%20cat%C3%A1logo."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-center py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-[10px] font-bold uppercase rounded-sm transition-colors mt-2"
+                >
+                  Contactar por WhatsApp (+595 986 454492)
+                </a>
+              </div>
             </div>
-            <p className="text-[11px] text-[#A1A1AA] font-light leading-relaxed">
-              ¿Buscando un modelo o fragancia específica? Consulta con nosotros directamente por WhatsApp.
-            </p>
-            <a
-              href="https://wa.me/595986454492?text=Hola%20RAYN!%20Deseo%20consultar%20por%20un%20producto%20del%20cat%C3%A1logo."
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-center py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-mono text-[10px] font-bold uppercase rounded-sm transition-colors mt-2"
-            >
-              Contactar por WhatsApp (+595 986 454492)
-            </a>
-          </div>
-        </aside>
+          </aside>
+        </div>
 
         <main className="lg:col-span-9 space-y-6">
           <div className="p-4 bg-[#0E0E12] border border-white/10 rounded-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
