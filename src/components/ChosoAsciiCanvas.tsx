@@ -101,13 +101,13 @@ export function ChosoAsciiCanvas({
     sampleCtx.imageSmoothingQuality = 'high';
 
     if (isMobile) {
-      const zoomFactor = 1.24;
+      const zoomFactor = 1.32;
       const cropW = img.naturalWidth / zoomFactor;
-      const cropH = Math.min(img.naturalHeight, img.naturalHeight / (zoomFactor * 0.88));
+      const cropH = img.naturalHeight / zoomFactor;
       const cropX = (img.naturalWidth - cropW) * 0.50;
       const cropY = 0;
       const drawW = cols;
-      const drawH = Math.round(cols * (cropH / cropW) * 1.08);
+      const drawH = Math.round(cols * (cropH / cropW));
       const topOffset = Math.round(rows * 0.008);
       sampleCtx.drawImage(img, cropX, cropY, cropW, cropH, 0, topOffset, drawW, drawH);
     } else if (imgAspect > canvasAspect) {
